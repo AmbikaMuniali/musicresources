@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lecteur MIDI avancé avec Tone.js</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      transition: background-color 0.3s;
+    }
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+    #pauseButton {
+      background-color: #ff9800;
+    }
+    #stopButton {
+      background-color: #f44336;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 1em;
+      color: #555;
+    }
+    .tempo-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+        font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Lecteur MIDI avec contrôles et instruments</h1>
+  <p>Cliquez sur les boutons pour contrôler la lecture.</p>
+  
+  <div class="controls">
+    <button id="playButton">▶️ Jouer</button>
+    <button id="pauseButton" disabled>⏸️ Pause</button>
+    <button id="stopButton" disabled>⏹️ Arrêter</button>
+  </div>
+
+  <div class="tempo-control">
+    <label for="tempo-slider">Tempo: </label>
+    <input type="range" id="tempo-slider" min="50" max="200" value="120">
+    <span id="tempo-value">120</span> BPM
+  </div>
+  
+  <p id="status">En attente...</p>
+
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.7.58/build/Tone.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.2/build/Midi.js"></script>
+  
+  <script>
+    // URL du fichier MIDI à charger
+    const midiUrl = 'CV_272-mono-piano-Connais_tu_cette_cite-soprano.mid';
+    
+    // Récupérer les éléments du DOM
+    const playButton = document.getElementById('playButton');
+    const pauseButton = document.getElementById('pauseButton');
+    const stopButton = document.getElementById('stopButton');
+    const statusText = document.getElementById('status');
+    const tempoSlider = document.getElementById('tempo-slider');
+    const tempoValueSpan = document.getElementById('tempo-value');
+    
+    // Variable globale pour stocker les synthétiseurs
+    let synths = {};
+
+    // Fonction pour mettre à jour l'état des boutons
+    function updateButtonState(state) {
+      playButton.disabled = (state === 'started');
+      pauseButton.disabled = (state === 'paused' || state === 'stopped');
+      stopButton.disabled = (state === 'stopped');
+    }
+
+    // Fonction pour la lecture du MIDI
+    async function setupAndPlayMidi() {
+      try {
+        // Mettre à jour l'état de l'interface pendant le chargement
+        statusText.textContent = 'Chargement du fichier MIDI...';
+        updateButtonState('loading');
+        
+        // Démarrer le contexte audio de Tone.js
+        await Tone.start();
+
+        // Charger le fichier MIDI
+        const midi = await Midi.fromUrl(midiUrl);
+        statusText.textContent = 'Fichier MIDI chargé. Lecture en cours...';
+        
+        // Vider les anciens synths et les parties avant de rejouer
+        // Cela évite les superpositions de sons lors de lectures successives
+        Tone.Transport.cancel();
+        for (const key in synths) {
+            if (synths.hasOwnProperty(key)) {
+                synths[key].dispose();
+            }
+        }
+        synths = {};
+        
+        // Itérer sur chaque piste MIDI
+        midi.tracks.forEach((track, index) => {
+          if (track.notes.length === 0) return;
+
+          // Créer un nouveau synth pour chaque piste
+          let synth = new Tone.PolySynth(Tone.Synth).toDestination();
+          synths[index] = synth;
+
+          // Créer une partie pour chaque piste
+          const part = new Tone.Part((time, note) => {
+            synth.triggerAttackRelease(note.name, note.duration, time, note.velocity);
+          }, track.notes).start(0);
+        });
+
+        // Configurer le tempo avec la valeur du curseur
+        Tone.Transport.bpm.value = tempoSlider.value;
+        // Démarrer le transport pour jouer
+        Tone.Transport.start();
+        updateButtonState('started');
+
+      } catch (e) {
+        console.error('Erreur lors du chargement ou de la lecture du MIDI:', e);
+        statusText.textContent = `Erreur : ${e.message}`;
+        updateButtonState('stopped');
+      }
+    }
+
+    // Fonction pour mettre en pause la lecture
+    function pauseMidi() {
+      Tone.Transport.pause();
+      updateButtonState('paused');
+      statusText.textContent = 'En pause.';
+    }
+
+    // Fonction pour arrêter la lecture
+    function stopMidi() {
+      Tone.Transport.stop();
+      // Annuler toutes les parties planifiées
+      Tone.Transport.cancel();
+      // Mettre à jour l'état et le texte
+      updateButtonState('stopped');
+      statusText.textContent = 'Arrêté. Prêt à rejouer.';
+    }
+
+    // Écouteur d'événement pour le curseur de tempo
+    tempoSlider.addEventListener('input', () => {
+        // Mettre à jour le BPM du transport de Tone.js en temps réel
+        Tone.Transport.bpm.value = tempoSlider.value;
+        // Mettre à jour l'affichage de la valeur du tempo
+        tempoValueSpan.textContent = tempoSlider.value;
+    });
+
+    // Ajouter les écouteurs d'événements pour les boutons
+    playButton.addEventListener('click', setupAndPlayMidi);
+    pauseButton.addEventListener('click', pauseMidi);
+    stopButton.addEventListener('click', stopMidi);
+
+    // Mettre à jour le statut une fois la lecture terminée
+    Tone.Transport.on('stop', () => {
+      statusText.textContent = 'Lecture terminée.';
+      updateButtonState('stopped');
+      stopMidi();
+    });
+
+    // Initial state
+    updateButtonState('stopped');
+
+  </script>
+
+</body>
+</html>

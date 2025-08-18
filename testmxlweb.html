@@ -1,0 +1,361 @@
+<!-- <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afficheur de Partition & Lecteur MIDI</title>
+    <script src="https://cdn.jsdelivr.net/npm/vexflow/build/cjs/vexflow.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.9.2/build/opensheetmusicdisplay.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/midi.js/0.3.0/midi.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/15.2.11/Tone.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        #osmd-container {
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            background-color: #fafafa;
+            overflow: auto;
+            max-height: 70vh;
+        }
+
+        .message {
+            margin-top: 1rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        #midi-controls {
+            margin-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem;
+            background-color: #e9ecef;
+            border-radius: 0.5rem;
+        }
+
+        #midi-controls button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        #midi-controls button#play {
+            background-color: #28a745;
+            color: white;
+        }
+
+        #midi-controls button#stop {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        #midi-controls select, #midi-controls input[type="range"] {
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Affichage de la partition</h1>
+        <div class="message">Chargement de la partition...</div>
+        <div id="osmd-container"></div>
+        
+        <div id="midi-controls">
+            <h3>Contrôles MIDI</h3>
+            <button id="play">Play ▶️</button>
+            <button id="stop">Stop ⏹️</button>
+            <div>
+                <label for="midi-channel-select">Canal:</label>
+                <select id="midi-channel-select"></select>
+            </div>
+            <div>
+                <label for="volume-control">Volume:</label>
+                <input type="range" id="volume-control" min="-60" max="0" value="-10">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Le contenu de la partition MusicXML encodé en base64 pour éviter les erreurs de chargement de fichier local.
+        // Ce contenu est un exemple simple car le fichier original n'est pas disponible pour des raisons de sécurité.
+
+        // Fonction pour initialiser et afficher la partition
+        function initializeOSMD() {
+            const container = document.getElementById('osmd-container');
+            const messageElement = document.querySelector('.message');
+            const musicFilePath = 'Sanctus_to_Amazing_Grace.mxl';
+
+            // Vérifier si la bibliothèque opensheetmusicdisplay a été chargée
+            if (typeof opensheetmusicdisplay === 'undefined') {
+                messageElement.textContent = "Erreur : La bibliothèque OpenSheetMusicDisplay n'a pas pu être chargée. Veuillez vérifier votre connexion.";
+                messageElement.style.color = 'red';
+                console.error("La variable 'opensheetmusicdisplay' n'est pas définie. Le script est exécuté avant que la bibliothèque ne soit chargée.");
+                return;
+            }
+            
+            // Initialiser OpenSheetMusicDisplay
+            const osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay(container, {
+                backend: "svg",
+                drawTitle: true,
+                drawSubtitle: true,
+                drawPartNames: true,
+                drawingParameters: "compacttight",
+            });
+
+            // Décoder la chaîne base64 et charger la partition
+            // const musicXmlContent = atob(musicXmlBase64);
+            osmd.load(musicFilePath)
+                .then(() => {
+                    messageElement.style.display = 'none';
+                    osmd.render();
+                })
+                .catch((error) => {
+                    console.error("Erreur lors du chargement de la partition :", error);
+                    messageElement.textContent = "Impossible de charger la partition. Assurez-vous que le fichier est au bon endroit ou que le contenu est valide.";
+                    messageElement.style.color = 'red';
+                });
+        }
+
+        // --- Code pour la lecture MIDI ---
+        const midiUrl = 'CV_272-mono-piano-Connais_tu_cette_cite-soprano.mid';
+        let midiFile = null;
+        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        const player = new Tone.Player(); // Le player n'est pas utilisé directement, mais la variable peut rester pour d'autres usages.
+        let volumes = {}; // Pour gérer les volumes de chaque canal
+
+        // Éléments du DOM
+        const playButton = document.getElementById('play');
+        const stopButton = document.getElementById('stop');
+        const channelSelect = document.getElementById('midi-channel-select');
+        const volumeControl = document.getElementById('volume-control');
+
+        // Fonction de chargement du fichier MIDI
+        async function loadMidi() {
+            try {
+                // Créer un objet Midi et charger le fichier
+                midiFile = await Tone.fromUrl(midiUrl);
+                
+                // Remplir le sélecteur de canaux
+                channelSelect.innerHTML = '';
+                const allOption = document.createElement('option');
+                allOption.value = 'all';
+                allOption.textContent = 'Tous les canaux';
+                channelSelect.appendChild(allOption);
+                
+                midiFile.tracks.forEach((track, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = track.name || `Canal ${index + 1}`;
+                    channelSelect.appendChild(option);
+                    volumes[index] = new Tone.Volume(-10).toDestination();
+                });
+                
+                console.log("Fichier MIDI chargé avec succès !");
+            } catch (error) {
+                console.error("Erreur lors du chargement du fichier MIDI :", error);
+            }
+        }
+
+        // Fonction pour jouer le MIDI
+        function playMidi() {
+            if (!midiFile) {
+                console.error("Fichier MIDI non chargé.");
+                return;
+            }
+            Tone.start();
+            Tone.Transport.cancel(); // Arrête et nettoie le transport
+            
+            const selectedChannelIndex = channelSelect.value;
+            const now = Tone.now();
+
+            midiFile.tracks.forEach((track, index) => {
+                if (selectedChannelIndex === 'all' || index.toString() === selectedChannelIndex) {
+                    track.notes.forEach(note => {
+                        // Utiliser la fonction du transport pour planifier les notes
+                        Tone.Transport.scheduleOnce(time => {
+                            synth.triggerAttackRelease(note.name, note.duration, time + now, note.velocity);
+                        }, note.time);
+                    });
+                }
+            });
+
+            Tone.Transport.start();
+        }
+
+        // Fonction pour arrêter le MIDI
+        function stopMidi() {
+            Tone.Transport.stop();
+            Tone.Transport.cancel();
+            synth.releaseAll();
+        }
+        
+        // Gérer le changement de volume
+        volumeControl.addEventListener('input', () => {
+            const selectedChannelIndex = channelSelect.value;
+            if (selectedChannelIndex === 'all') {
+                // Appliquer le volume à tous les canaux
+                Object.values(volumes).forEach(vol => vol.volume.value = volumeControl.value);
+            } else if (volumes[selectedChannelIndex]) {
+                volumes[selectedChannelIndex].volume.value = volumeControl.value;
+            }
+            console.log("Volume réglé à :", volumeControl.value);
+        });
+
+        // Événements des boutons
+        playButton.addEventListener('click', playMidi);
+        stopButton.addEventListener('click', stopMidi);
+
+        // Appeler la fonction d'initialisation après le chargement complet de la page
+        window.addEventListener('load', () => {
+            initializeOSMD();
+            loadMidi();
+        });
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tone.js et Fichier MIDI</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 1em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Lecture de musique MIDI avec Tone.js</h1>
+  <p>Cliquez sur le bouton pour démarrer la lecture du fichier MIDI.</p>
+  <button id="playButton">Jouer la mélodie</button>
+  <p id="status">En attente...</p>
+
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.7.58/build/Tone.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.2/build/Midi.js"></script>
+
+  <script>
+    // L'URL du fichier MIDI fourni
+    const midiUrl = 'CV_272-mono-piano-Connais_tu_cette_cite-soprano.mid';
+
+    // Sélection des éléments HTML
+    const playButton = document.getElementById('playButton');
+    const statusText = document.getElementById('status');
+
+    // Fonction asynchrone pour configurer et jouer le MIDI
+    async function setupAndPlayMidi() {
+      try {
+        // Mettre à jour l'état de l'interface
+        statusText.textContent = 'Chargement du fichier MIDI...';
+        playButton.disabled = true;
+
+        // Démarrer le contexte audio de Tone.js (nécessaire pour la lecture)
+        await Tone.start();
+
+        // Créer un synthétiseur et le connecter à la sortie principale
+        const synth = new Tone.Synth().toDestination();
+
+        // Charger le fichier MIDI
+        const midi = await Midi.fromUrl(midiUrl);
+        statusText.textContent = 'Fichier MIDI chargé. Lecture en cours...';
+
+        // Parcourir la première piste MIDI et créer une partie Tone.js
+        const track = midi.tracks[0];
+        if (track && track.notes.length > 0) {
+          const part = new Tone.Part((time, note) => {
+            // Appeler le synthétiseur pour chaque note
+            synth.triggerAttackRelease(note.name, note.duration, time, note.velocity);
+          }, track.notes).start(0);
+
+          // Configurer et démarrer le transport pour jouer
+          Tone.Transport.bpm.value = midi.header.tempos[0].bpm;
+          Tone.Transport.start();
+
+          // Mettre à jour le statut une fois la lecture terminée
+          Tone.Transport.on('stop', () => {
+            statusText.textContent = 'Lecture terminée.';
+            playButton.disabled = false;
+          });
+        } else {
+          statusText.textContent = "Aucune note trouvée dans le fichier MIDI.";
+          playButton.disabled = false;
+        }
+
+      } catch (e) {
+        console.error('Erreur lors du chargement ou de la lecture du MIDI:', e);
+        statusText.textContent = `Erreur : ${e.message}`;
+        playButton.disabled = false;
+      }
+    }
+
+    // Ajouter un écouteur d'événement au bouton
+    playButton.addEventListener('click', setupAndPlayMidi);
+
+  </script>
+
+</body>
+</html>
