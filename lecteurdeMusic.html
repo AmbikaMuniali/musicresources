@@ -5,20 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lecteur MIDI avancé avec Tone.js</title>
   <style>
+    /* Styles généraux */
     body {
-      font-family: sans-serif;
+      font-family: 'Inter', sans-serif;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background-color: #f0f0f0;
+      min-height: 100vh;
+      background-color: #e0f2fe; /* light blue */
       text-align: center;
+      color: #334155; /* slate-700 */
+      padding: 20px;
     }
+    .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+        max-width: 90%;
+        width: 600px;
+    }
+
+    /* Styles des boutons */
     .controls {
       display: flex;
-      gap: 10px;
+      gap: 15px;
       margin-top: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
     button {
       padding: 15px 30px;
@@ -26,25 +41,53 @@
       cursor: pointer;
       border: none;
       border-radius: 8px;
-      background-color: #4CAF50;
       color: white;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
     button:disabled {
-        background-color: #ccc;
+        background-color: #cbd5e1; /* slate-300 */
         cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    #playButton {
+      background-color: #22c55e; /* green-500 */
     }
     #pauseButton {
-      background-color: #ff9800;
+      background-color: #f97316; /* orange-500 */
     }
     #stopButton {
-      background-color: #f44336;
+      background-color: #ef4444; /* red-500 */
     }
-    #status {
+
+    /* Styles pour la barre de progression */
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background-color: #e2e8f0;
+      border-radius: 5px;
       margin-top: 20px;
-      font-size: 1em;
-      color: #555;
+      cursor: pointer;
     }
+    .progress-bar {
+      height: 100%;
+      background-color: #3b82f6; /* blue-500 */
+      border-radius: 5px;
+      width: 0;
+      transition: width 0.1s linear;
+    }
+    .time-display {
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #64748b;
+    }
+
+    /* Autres contrôles et affichages */
     .tempo-control {
         display: flex;
         align-items: center;
@@ -52,98 +95,269 @@
         margin-top: 20px;
         font-size: 1.2em;
     }
+    #status {
+      margin-top: 20px;
+      font-size: 1em;
+      color: #64748b; /* slate-500 */
+      height: 20px;
+    }
+
+    /* Styles pour la sélection des canaux */
+    .channels-container {
+        margin-top: 30px;
+        border-top: 1px solid #e2e8f0; /* slate-200 */
+        padding-top: 20px;
+    }
+    #channel-list {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    #channel-list label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1em;
+        cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Lecteur MIDI avec contrôles et instruments</h1>
-  <p>Cliquez sur les boutons pour contrôler la lecture.</p>
-  
-  <div class="controls">
-    <button id="playButton">▶️ Jouer</button>
-    <button id="pauseButton" disabled>⏸️ Pause</button>
-    <button id="stopButton" disabled>⏹️ Arrêter</button>
-  </div>
+  <div class="container">
+    <h1>Lecteur MIDI</h1>
+    <p>Chargez le fichier, sélectionnez les pistes à jouer, puis cliquez sur ▶️.</p>
+    
+    <div class="controls">
+      <button id="loadButton">📂 Charger</button>
+      <button id="playButton" disabled>▶️ Jouer</button>
+      <button id="pauseButton" disabled>⏸️ Pause</button>
+      <button id="stopButton" disabled>⏹️ Arrêter</button>
+    </div>
 
-  <div class="tempo-control">
-    <label for="tempo-slider">Tempo: </label>
-    <input type="range" id="tempo-slider" min="50" max="200" value="120">
-    <span id="tempo-value">120</span> BPM
+    <!-- NOUVEAU : Barre de progression et affichage du temps -->
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+
+    <div class="tempo-control">
+      <label for="tempo-slider">Tempo: </label>
+      <input type="range" id="tempo-slider" min="50" max="200" value="120">
+      <span id="tempo-value">120</span> BPM
+    </div>
+    
+    <p id="status">En attente du chargement...</p>
+
+    <div class="channels-container">
+      <h2>Pistes MIDI</h2>
+      <div id="channel-list">
+        <!-- Les cases à cocher seront ajoutées ici par JavaScript -->
+        <p>Veuillez charger un fichier MIDI pour voir les pistes.</p>
+      </div>
+    </div>
   </div>
-  
-  <p id="status">En attente...</p>
 
   <script src="https://cdn.jsdelivr.net/npm/tone@14.7.58/build/Tone.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.2/build/Midi.js"></script>
   
   <script>
-    // URL du fichier MIDI à charger
+    // URL du fichier MIDI à charger. Vous pouvez le remplacer par le vôtre.
     const midiUrl = 'CV_272-mono-piano-Connais_tu_cette_cite-soprano.mid';
     
     // Récupérer les éléments du DOM
+    const loadButton = document.getElementById('loadButton');
     const playButton = document.getElementById('playButton');
     const pauseButton = document.getElementById('pauseButton');
     const stopButton = document.getElementById('stopButton');
     const statusText = document.getElementById('status');
     const tempoSlider = document.getElementById('tempo-slider');
     const tempoValueSpan = document.getElementById('tempo-value');
+    const channelList = document.getElementById('channel-list');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const timeDisplay = document.getElementById('timeDisplay');
     
-    // Variable globale pour stocker les synthétiseurs
+    // Variables globales pour stocker les données MIDI et les synthétiseurs
+    let midiData = null;
     let synths = {};
+    let isReadyToPlay = false;
+    let duration = 0; // Durée totale en secondes
 
-    // Fonction pour mettre à jour l'état des boutons
+    // Fonction pour mettre à jour l'état des boutons et des contrôles
     function updateButtonState(state) {
-      playButton.disabled = (state === 'started');
-      pauseButton.disabled = (state === 'paused' || state === 'stopped');
-      stopButton.disabled = (state === 'stopped');
+      if (state === 'loading') {
+          loadButton.disabled = true;
+          playButton.disabled = true;
+          pauseButton.disabled = true;
+          stopButton.disabled = true;
+      } else if (state === 'stopped') {
+          loadButton.disabled = false;
+          playButton.disabled = !isReadyToPlay;
+          pauseButton.disabled = true;
+          stopButton.disabled = true;
+      } else if (state === 'playing') {
+          loadButton.disabled = true;
+          playButton.disabled = true;
+          pauseButton.disabled = false;
+          stopButton.disabled = false;
+      } else if (state === 'paused') {
+          loadButton.disabled = true;
+          playButton.disabled = false;
+          pauseButton.disabled = true;
+          stopButton.disabled = false;
+      }
+    }
+
+    // Fonction pour formater le temps en minutes:secondes
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.floor(seconds % 60);
+      return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    }
+
+    // Fonction pour mettre à jour la barre de progression et l'affichage du temps
+    function updateProgress() {
+      // On s'assure que le Transport est en cours d'exécution
+      if (Tone.Transport.state === 'started' && duration > 0) {
+        const currentTime = Tone.Transport.seconds;
+        const progressPercentage = (currentTime / duration) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+      } else {
+        // Reset de la barre de progression et de l'affichage du temps si la lecture est arrêtée
+        progressBar.style.width = '0%';
+        timeDisplay.textContent = '0:00 / 0:00';
+      }
+    }
+    
+    // Fonction pour gérer le clic sur la barre de progression
+    function handleProgressClick(e) {
+      if (!isReadyToPlay || Tone.Transport.state === 'stopped' || duration === 0) {
+        return;
+      }
+      const progressBarWidth = progressContainer.clientWidth;
+      const clickX = e.offsetX;
+      const newTime = (clickX / progressBarWidth) * duration;
+      
+      // Mettre à jour la position du Transport et redémarrer la lecture
+      Tone.Transport.seconds = newTime;
+      // Mettre à jour immédiatement la barre de progression pour un feedback visuel
+      updateProgress();
+      
+      // Si c'était en pause, on redémarre la lecture
+      if (Tone.Transport.state === 'paused') {
+        Tone.Transport.start();
+        updateButtonState('playing');
+      }
+    }
+
+    // Fonction pour charger le fichier MIDI et afficher les canaux
+    async function loadMidi() {
+        try {
+            statusText.textContent = 'Chargement du fichier MIDI...';
+            updateButtonState('loading');
+            
+            // Charger le fichier MIDI
+            midiData = await Midi.fromUrl(midiUrl);
+            
+            // Calculer la durée totale
+            duration = midiData.duration;
+            timeDisplay.textContent = `0:00 / ${formatTime(duration)}`;
+            
+            // Vider les anciens synthétiseurs
+            for (const key in synths) {
+                if (synths.hasOwnProperty(key)) {
+                    synths[key].dispose();
+                }
+            }
+            synths = {};
+
+            // Afficher les canaux
+            channelList.innerHTML = '';
+            midiData.tracks.forEach((track, index) => {
+                // Créer une case à cocher uniquement si la piste contient des notes
+                if (track.notes.length > 0) {
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = true; // Par défaut, tout est sélectionné
+                    checkbox.id = `channel-${index}`;
+                    checkbox.dataset.trackIndex = index;
+                    
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(` Piste ${index + 1}`));
+                    channelList.appendChild(label);
+                }
+            });
+
+            isReadyToPlay = true;
+            statusText.textContent = 'Fichier chargé. Sélectionnez les pistes à jouer.';
+            updateButtonState('stopped');
+
+        } catch (e) {
+            console.error('Erreur lors du chargement du MIDI:', e);
+            statusText.textContent = `Erreur : ${e.message}`;
+            updateButtonState('stopped');
+            isReadyToPlay = false;
+        }
     }
 
     // Fonction pour la lecture du MIDI
-    async function setupAndPlayMidi() {
+    async function playMidi() {
       try {
-        // Mettre à jour l'état de l'interface pendant le chargement
-        statusText.textContent = 'Chargement du fichier MIDI...';
-        updateButtonState('loading');
-        
-        // Démarrer le contexte audio de Tone.js
-        await Tone.start();
-
-        // Charger le fichier MIDI
-        const midi = await Midi.fromUrl(midiUrl);
-        statusText.textContent = 'Fichier MIDI chargé. Lecture en cours...';
-        
-        // Vider les anciens synths et les parties avant de rejouer
-        // Cela évite les superpositions de sons lors de lectures successives
-        Tone.Transport.cancel();
-        for (const key in synths) {
-            if (synths.hasOwnProperty(key)) {
-                synths[key].dispose();
-            }
+        if (!isReadyToPlay) {
+            statusText.textContent = 'Veuillez d\'abord charger un fichier MIDI.';
+            return;
         }
-        synths = {};
         
-        // Itérer sur chaque piste MIDI
-        midi.tracks.forEach((track, index) => {
-          if (track.notes.length === 0) return;
+        await Tone.start();
+        
+        statusText.textContent = 'Lecture en cours...';
+        
+        // Si la lecture est arrêtée, on recrée les parties. Sinon, on reprend simplement.
+        if (Tone.Transport.state !== 'paused') {
+          Tone.Transport.cancel();
+          // Vider les anciens synthétiseurs
+          for (const key in synths) {
+              if (synths.hasOwnProperty(key)) {
+                  synths[key].dispose();
+              }
+          }
+          synths = {};
+          
+          // Obtenir toutes les cases à cocher cochées
+          const selectedCheckboxes = document.querySelectorAll('#channel-list input[type="checkbox"]:checked');
+          const selectedTrackIndexes = Array.from(selectedCheckboxes).map(cb => parseInt(cb.dataset.trackIndex));
 
-          // Créer un nouveau synth pour chaque piste
-          let synth = new Tone.PolySynth(Tone.Synth).toDestination();
-          synths[index] = synth;
+          // Itérer sur chaque piste MIDI
+          midiData.tracks.forEach((track, index) => {
+            // Jouer la piste uniquement si elle est sélectionnée
+            if (selectedTrackIndexes.includes(index)) {
+              let synth = new Tone.PolySynth(Tone.Synth).toDestination();
+              synths[index] = synth;
+              const part = new Tone.Part((time, note) => {
+                synth.triggerAttackRelease(note.name, note.duration, time, note.velocity);
+              }, track.notes).start(0);
+            }
+          });
+          // Configurer le tempo avec la valeur du curseur
+          Tone.Transport.bpm.value = tempoSlider.value;
+        }
 
-          // Créer une partie pour chaque piste
-          const part = new Tone.Part((time, note) => {
-            synth.triggerAttackRelease(note.name, note.duration, time, note.velocity);
-          }, track.notes).start(0);
-        });
-
-        // Configurer le tempo avec la valeur du curseur
-        Tone.Transport.bpm.value = tempoSlider.value;
         // Démarrer le transport pour jouer
         Tone.Transport.start();
-        updateButtonState('started');
+        updateButtonState('playing');
+
+        // Mettre en place un intervalle pour mettre à jour la barre de progression
+        Tone.Transport.scheduleRepeat(() => {
+          updateProgress();
+        }, "100ms"); // Mettre à jour toutes les 100ms
 
       } catch (e) {
-        console.error('Erreur lors du chargement ou de la lecture du MIDI:', e);
+        console.error('Erreur lors de la lecture du MIDI:', e);
         statusText.textContent = `Erreur : ${e.message}`;
         updateButtonState('stopped');
       }
@@ -159,36 +373,36 @@
     // Fonction pour arrêter la lecture
     function stopMidi() {
       Tone.Transport.stop();
-      // Annuler toutes les parties planifiées
       Tone.Transport.cancel();
-      // Mettre à jour l'état et le texte
       updateButtonState('stopped');
       statusText.textContent = 'Arrêté. Prêt à rejouer.';
+      updateProgress(); // Mettre à jour l'affichage de la progression à 0:00
     }
 
     // Écouteur d'événement pour le curseur de tempo
     tempoSlider.addEventListener('input', () => {
-        // Mettre à jour le BPM du transport de Tone.js en temps réel
         Tone.Transport.bpm.value = tempoSlider.value;
-        // Mettre à jour l'affichage de la valeur du tempo
         tempoValueSpan.textContent = tempoSlider.value;
     });
 
     // Ajouter les écouteurs d'événements pour les boutons
-    playButton.addEventListener('click', setupAndPlayMidi);
+    loadButton.addEventListener('click', loadMidi);
+    playButton.addEventListener('click', playMidi);
     pauseButton.addEventListener('click', pauseMidi);
     stopButton.addEventListener('click', stopMidi);
+    
+    // NOUVEAU : Écouteur d'événement pour la barre de progression
+    progressContainer.addEventListener('click', handleProgressClick);
 
     // Mettre à jour le statut une fois la lecture terminée
     Tone.Transport.on('stop', () => {
       statusText.textContent = 'Lecture terminée.';
       updateButtonState('stopped');
-      stopMidi();
+      updateProgress();
     });
 
-    // Initial state
+    // État initial
     updateButtonState('stopped');
-
   </script>
 
 </body>
