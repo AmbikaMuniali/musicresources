@@ -7,10 +7,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Chargement de Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome pour les icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chargement des bibliothèques Tone.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.28/build/Midi.js"></script>
   <style>
-    /* Styles généraux */
+    /* Styles personnalisés pour le corps et les conteneurs */
     body {
       font-family: 'Inter', sans-serif;
       display: flex;
@@ -22,1194 +27,1220 @@
       text-align: center;
       color: #334155; /* slate-700 */
       padding: 20px;
+      overflow: hidden; /* Empêche le défilement horizontal */
     }
     .container {
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-        max-width: 90%;
-        width: 600px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* Styles des boutons */
-    .controls {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      max-width: 90%;
+      width: 500px;
       display: flex;
-      gap: 15px;
-      margin-top: 20px;
+      flex-direction: column;
+      align-items: center;
+    }
+    /* Styles pour les pop-ups */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
       justify-content: center;
-      flex-wrap: wrap;
+      align-items: center;
+      z-index: 10;
     }
-    button {
-      padding: 15px 30px;
-      font-size: 1.2em;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      transition: all 0.3s ease-in-out;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    .popup-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    .tempo-popup-content {
+      width: 250px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    button:disabled {
-        background-color: #cbd5e1; /* slate-300 */
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
+    .instruments-popup-content {
+      width: 300px;
     }
-    #playButton {
-      background-color: #22c55e; /* green-500 */
-    }
-    #pauseButton {
-      background-color: #f97316; /* orange-500 */
-    }
-    #stopButton {
-      background-color: #ef4444; /* red-500 */
-    }
-
-    /* Autres contrôles et affichages */
-    .tempo-control {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 20px;
-        font-size: 1.2em;
-    }
-    #status {
-      margin-top: 20px;
-      font-size: 1em;
-      color: #64748b; /* slate-500 */
-      height: 20px;
-    }
-
-    /* Styles pour la sélection des chansons */
-    .song-selection {
-        margin-top: 20px;
-        width: 100%;
-        max-width: 400px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-    .song-selection label {
-        font-size: 1.2em;
-        color: #334155;
-    }
-    #song-select {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #cbd5e1;
-        font-size: 1em;
-        background-color: #fff;
-    }
-
-    .nav-buttons {
-        display: flex;
-        gap: 10px;
-    }
-    .nav-buttons button {
-        padding: 10px 20px;
-        font-size: 1em;
-        background-color: #1e90ff; /* dodgerblue */
-    }
-
-    /* Styles pour la sélection des canaux */
-    .channels-container {
-        margin-top: 30px;
-        border-top: 1px solid #e2e8f0; /* slate-200 */
-        padding-top: 20px;
-        width: 100%;
-        max-width: 400px;
-    }
-    #channel-list {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        margin-top: 15px;
-    }
-    #channel-list label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 1em;
-        cursor: pointer;
+    /* Masquer le bouton de chargement local */
+    #loadButton {
+      display: none;
     }
   </style>
 </head>
-<body>
+<body class="bg-gray-100 flex flex-col justify-between items-center min-h-screen p-4">
 
-  <div class="container">
-    <h1>Lecteur MIDI</h1>
-    <p>Chargez un fichier MIDI ou sélectionnez un cantique pour commencer.</p>
+  <!-- Contenu principal -->
+  <div class="container mb-24">
+    <h1 class="text-3xl font-bold mb-4">Lecteur MIDI Tone.js</h1>
+    <p class="text-sm mb-6">
+      Sélectionnez un cantique dans la liste pour commencer.
+    </p>
 
-    <div class="song-selection">
-        <label for="song-select">Sélectionnez un cantique:</label>
-        <select id="song-select"></select>
-        <div class="nav-buttons">
-            <button id="prevButton">Précédent</button>
-            <button id="nextButton">Suivant</button>
-        </div>
+    <!-- Sélection de cantique -->
+    <div class="w-full flex flex-col items-center mb-6">
+      <label for="songSelect" class="block text-sm font-medium text-gray-700 mb-2">Sélectionner un cantique :</label>
+      <select id="songSelect" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></select>
     </div>
+    <p id="status" class="text-sm font-medium mt-2">En attente...</p>
     
-    <div class="controls">
+    <!-- Boutons originaux (cachés) -->
+    <div class="controls hidden">
       <button id="loadButton">📂 Charger Fichier Local</button>
       <button id="playButton" disabled>▶️ Jouer</button>
       <button id="pauseButton" disabled>⏸️ Pause</button>
       <button id="stopButton" disabled>⏹️ Arrêter</button>
     </div>
+    
+  </div>
 
-    <div class="tempo-control">
-      <label for="tempo-slider">Tempo: </label>
-      <input type="range" id="tempo-slider" min="50" max="200" value="120">
-      <span id="tempo-value">120</span> BPM
-    </div>
-    <p id="status">En attente...</p>
-
-    <div class="channels-container">
-      <h2>Pistes MIDI par Instrument</h2>
-      <div id="channel-list">
-        </div>
+  <!-- Pop-up du tempo -->
+  <div id="tempoPopup" class="popup hidden">
+    <div class="tempo-popup-content">
+      <h3 class="text-xl font-bold mb-4">Régler le tempo</h3>
+      <input type="range" id="tempoSliderPopup" class="w-full" min="30" max="240" value="120">
+      <p class="text-lg font-medium mt-2">Tempo: <span id="tempoValuePopup" class="font-bold">120</span> BPM</p>
+      <button onclick="document.getElementById('tempoPopup').style.display='none'" class="mt-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">Fermer</button>
     </div>
   </div>
 
+  <!-- Pop-up de sélection des instruments -->
+  <div id="instrumentsPopup" class="popup hidden">
+    <div class="instruments-popup-content">
+      <h3 class="text-xl font-bold mb-4">Sélectionner les instruments</h3>
+      <p class="text-sm text-gray-600 mb-4">Sélectionnez les instruments pour chaque piste MIDI. Si un cantique n'a qu'une seule piste, il y aura un seul choix.</p>
+      <div id="instrumentSelectContainer" class="space-y-4">
+        <!-- Les listes d'instruments seront insérées ici par le JavaScript -->
+      </div>
+      <button onclick="document.getElementById('instrumentsPopup').style.display='none'" class="mt-4 w-full bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">Fermer</button>
+    </div>
+  </div>
+
+  <!-- Barre de navigation fixe en bas -->
+  <div class="fixed bottom-0 left-0 w-full flex justify-center bg-white border-t border-gray-200 shadow-lg z-20">
+    <button id="voiceButton" class="flex-1 bg-slate-800 text-white p-4 text-3xl hover:bg-slate-600 transition-colors rounded-tl-xl rounded-bl-xl">
+      <i class="fa-solid fa-guitar"></i> <!-- Icône d'instrument -->
+    </button>
+    <button id="prevButton" class="flex-1 bg-slate-800 text-white p-4 text-3xl hover:bg-slate-600 transition-colors">
+      <i class="fa-solid fa-backward-step"></i> <!-- Icône précédent -->
+    </button>
+    <button id="playPauseButton" class="flex-1 bg-slate-800 text-white p-4 text-3xl hover:bg-slate-600 transition-colors">
+      <i id="playPauseIcon" class="fa-solid fa-play"></i> <!-- Icône de lecture/pause -->
+    </button>
+    <button id="stopButton" class="flex-1 bg-slate-800 text-white p-4 text-3xl hover:bg-slate-600 transition-colors">
+      <i class="fa-solid fa-stop"></i> <!-- Icône de stop -->
+    </button>
+    <button id="nextButton" class="flex-1 bg-slate-800 text-white p-4 text-3xl hover:bg-slate-600 transition-colors">
+      <i class="fa-solid fa-forward-step"></i> <!-- Icône suivant -->
+    </button>
+    <button id="tempoButton" class="flex-1 bg-slate-800 text-white p-4 text-3xl hover:bg-slate-600 transition-colors rounded-tr-xl rounded-br-xl">
+      <i class="fa-solid fa-gauge-high"></i> <!-- Icône de tempo -->
+    </button>
+  </div>
+  
   <script>
-    // Liste des cantiques à partir de votre fichier JSON
+    // Liste des cantiques à partir de votre fichier JSON original
     const cantiques = [
         
         {
             "numero": "5",
             "titre": "Jésus, Jésus, seul nom",
-            "pdfA4": "CV/CV_005-Jesus_Jesus_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_005-polyinstru-Jesus_Jesus.mid"
+            "pdfA4": "CV_005-Jesus_Jesus_A4-avecMusique.pdf",
+            "instruMidi": "CV_005-polyinstru-Jesus_Jesus.mid"
         },
         {
             "numero": "6",
             "titre": "À Dieu soit la gloire",
-            "pdfA4": "CV/CV_006-A_Dieu_soit_la_gloire_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_006-polyinstru-A_Dieu_soit_la_gloire.mid"
+            "pdfA4": "CV_006-A_Dieu_soit_la_gloire_A4-avecMusique.pdf",
+            "instruMidi": "CV_006-polyinstru-A_Dieu_soit_la_gloire.mid"
         },
         {
             "numero": "8",
             "titre": "Le nom de Jésus est si doux",
-            "pdfA4": "CV/CV_008-Le_nom_de_Jesus_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_008-polyinstru-Le_nom_de_Jesus.mid"
+            "pdfA4": "CV_008-Le_nom_de_Jesus_A4-avecMusique.pdf",
+            "instruMidi": "CV_008-polyinstru-Le_nom_de_Jesus.mid"
         },
         {
             "numero": "11",
             "titre": "Adorable mystère",
-            "pdfA4": "CV/CV_011-Adorable_mystere_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_011-polyinstru-Adorable_mystere.mid"
+            "pdfA4": "CV_011-Adorable_mystere_A4-avecMusique.pdf",
+            "instruMidi": "CV_011-polyinstru-Adorable_mystere.mid"
         },
         {
             "numero": "17",
             "titre": "À Celui qui nous a lavés",
-            "pdfA4": "CV/CV_017-A_celui_qui_nous_a_laves_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_017-polyinstru-A_celui_qui_nous_a_laves.mid"
+            "pdfA4": "CV_017-A_celui_qui_nous_a_laves_A4-avecMusique.pdf",
+            "instruMidi": "CV_017-polyinstru-A_celui_qui_nous_a_laves.mid"
         },
         {
             "numero": "18",
             "titre": "Vers toi monte notre hommage",
-            "pdfA4": "CV/CV_018-Vers_toi_monte_notre_hommage_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_018-polyinstru-Vers_toi_monte_notre_hommage.mid"
+            "pdfA4": "CV_018-Vers_toi_monte_notre_hommage_A4-avecMusique.pdf",
+            "instruMidi": "CV_018-polyinstru-Vers_toi_monte_notre_hommage.mid"
         },
         {
             "numero": "20",
             "titre": "Oh! quel bonheur de le connaitre",
-            "pdfA4": "CV/CV_020-Oh_quel_bonheur_de_le_connaitre_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_020-polyinstru-Oh_quel_bonheur_de_le_connaitre.mid"
+            "pdfA4": "CV_020-Oh_quel_bonheur_de_le_connaitre_A4-avecMusique.pdf",
+            "instruMidi": "CV_020-polyinstru-Oh_quel_bonheur_de_le_connaitre.mid"
         },
         {
             "numero": "22",
             "titre": "Je l'ai trouvé le bonheur ineffable",
-            "pdfA4": "CV/CV_022-Je_l_ai_trouve_le_bonheur_ineffable_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_022-polyinstru-Je_l_ai_trouve_le_bonheur_ineffable.mid"
+            "pdfA4": "CV_022-Je_l_ai_trouve_le_bonheur_ineffable_A4-avecMusique.pdf",
+            "instruMidi": "CV_022-polyinstru-Je_l_ai_trouve_le_bonheur_ineffable.mid"
         },
         {
             "numero": "24",
             "titre": "Par tous les saints glorifié",
-            "pdfA4": "CV/CV_024-Par_tous_les_saints_glorifie_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_024-polyinstru-Par_tous_les_saints_glorifie.mid"
+            "pdfA4": "CV_024-Par_tous_les_saints_glorifie_A4-avecMusique.pdf",
+            "instruMidi": "CV_024-polyinstru-Par_tous_les_saints_glorifie.mid"
         },
         {
             "numero": "26",
             "titre": "Les rayons de l'amour divin",
-            "pdfA4": "CV/CV_026-Les_rayons_de_l_amour_divin_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_026-polyinstru-Les_rayons_de_l_amour_divin.mid"
+            "pdfA4": "CV_026-Les_rayons_de_l_amour_divin_A4-avecMusique.pdf",
+            "instruMidi": "CV_026-polyinstru-Les_rayons_de_l_amour_divin.mid"
         },
         {
             "numero": "28",
             "titre": "Oh! que toute la terre entonne",
-            "pdfA4": "CV/CV_028-Oh_que_toute_la_terre_entonne_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_028-polyinstru-Oh_que_toute_la_terre_entonne.mid"
+            "pdfA4": "CV_028-Oh_que_toute_la_terre_entonne_A4-avecMusique.pdf",
+            "instruMidi": "CV_028-polyinstru-Oh_que_toute_la_terre_entonne.mid"
         },
         {
             "numero": "29",
             "titre": "Rédempteur adorable",
-            "pdfA4": "CV/CV_029-Redempteur_adorable_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_029-polyinstru-Redempteur_adorable.mid"
+            "pdfA4": "CV_029-Redempteur_adorable_A4-avecMusique.pdf",
+            "instruMidi": "CV_029-polyinstru-Redempteur_adorable.mid"
         },
         {
             "numero": "30",
             "titre": "Ma richesse et ma gloire",
-            "pdfA4": "CV/CV_030-Ma_richesse_ma_gloire_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_030-polyinstru-Ma_richesse_ma_gloire.mid"
+            "pdfA4": "CV_030-Ma_richesse_ma_gloire_A4-avecMusique.pdf",
+            "instruMidi": "CV_030-polyinstru-Ma_richesse_ma_gloire.mid"
         },
         {
             "numero": "34",
             "titre": "Ah! Si ton sang, si ta mort, si ta vie",
-            "pdfA4": "CV/CV_034-Ah_si_ton_sang_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_034-polyinstru-Ah_si_ton_sang.mid"
+            "pdfA4": "CV_034-Ah_si_ton_sang_A4-avecMusique.pdf",
+            "instruMidi": "CV_034-polyinstru-Ah_si_ton_sang.mid"
         },
         {
             "numero": "41",
             "titre": "Roi couvert de blessures",
-            "pdfA4": "CV/CV_041-Roi_couvert_de_blessures_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_041-polyinstru-Roi_couvert_de_blessures.mid"
+            "pdfA4": "CV_041-Roi_couvert_de_blessures_A4-avecMusique.pdf",
+            "instruMidi": "CV_041-polyinstru-Roi_couvert_de_blessures.mid"
         },
         {
             "numero": "42",
             "titre": "Agneau de Dieu, Messager de la grâce",
-            "pdfA4": "CV/CV_042-Agneau_de_Dieu_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_042-polyinstru-Agneau_de_Dieu.mid"
+            "pdfA4": "CV_042-Agneau_de_Dieu_A4-avecMusique.pdf",
+            "instruMidi": "CV_042-polyinstru-Agneau_de_Dieu.mid"
         },
         {
             "numero": "43",
             "titre": "Jésus-Christ est ma sagesse",
-            "pdfA4": "CV/CV_043-Jesus_Christ_est_ma_sagesse_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_043-polyinstru-Jesus_Christ_est_ma_sagesse.mid"
+            "pdfA4": "CV_043-Jesus_Christ_est_ma_sagesse_A4-avecMusique.pdf",
+            "instruMidi": "CV_043-polyinstru-Jesus_Christ_est_ma_sagesse.mid"
         },
         {
             "numero": null,
             "titre": "Venez contempler au calvaire",
-            "pdfA4": "CV/CV_045a-Venez_contempler_au_Calvaire_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_045a-polyinstru-Venez_contempler_au_Calvaire.mid"
+            "pdfA4": "CV_045a-Venez_contempler_au_Calvaire_A4-avecMusique.pdf",
+            "instruMidi": "CV_045a-polyinstru-Venez_contempler_au_Calvaire.mid"
         },
         {
             "numero": "46",
             "titre": "Viens mon âme, et contemple",
-            "pdfA4": "CV/CV_046-Viens_mon_ame_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_046-polyinstru-Viens_mon_ame.mid"
+            "pdfA4": "CV_046-Viens_mon_ame_A4-avecMusique.pdf",
+            "instruMidi": "CV_046-polyinstru-Viens_mon_ame.mid"
         },
         {
             "numero": "47",
             "titre": "C'est toi Jésus, Pain de vie",
-            "pdfA4": "CV/CV_047-C_est_toi_Jesus_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_047-polyinstru-C_est_toi_Jesus.mid"
+            "pdfA4": "CV_047-C_est_toi_Jesus_A4-avecMusique.pdf",
+            "instruMidi": "CV_047-polyinstru-C_est_toi_Jesus.mid"
         },
         {
             "numero": "57",
             "titre": "Viens à la croix",
-            "pdfA4": "CV/CV_057-Viens_a_la_croix_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_057-polyinstru-Viens_a_la_croix.mid"
+            "pdfA4": "CV_057-Viens_a_la_croix_A4-avecMusique.pdf",
+            "instruMidi": "CV_057-polyinstru-Viens_a_la_croix.mid"
         },
         {
             "numero": "70",
             "titre": "Coeurs fatigués et chargés",
-            "pdfA4": "CV/CV_070-Coeurs_fatigues_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_070-polyinstru-Coeurs_fatigues.mid"
+            "pdfA4": "CV_070-Coeurs_fatigues_A4-avecMusique.pdf",
+            "instruMidi": "CV_070-polyinstru-Coeurs_fatigues.mid"
         },
         {
             "numero": "71",
             "titre": "Reviens!",
-            "pdfA4": "CV/CV_071-Reviens_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_071-polyinstru-Reviens.mid"
+            "pdfA4": "CV_071-Reviens_A4-avecMusique.pdf",
+            "instruMidi": "CV_071-polyinstru-Reviens.mid"
         },
         {
             "numero": "74",
             "titre": "Arrête, ô pécheur, arrête",
-            "pdfA4": "CV/CV_074-Arrete_o_pecheur_arrete_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_074-polyinstru-Arrete_o_pecheur_arrete.mid"
+            "pdfA4": "CV_074-Arrete_o_pecheur_arrete_A4-avecMusique.pdf",
+            "instruMidi": "CV_074-polyinstru-Arrete_o_pecheur_arrete.mid"
         },
         {
             "numero": "75",
             "titre": "Comme un phare sur la plage",
-            "pdfA4": "CV/CV_075-Comme_un_phare_sur_la_plage_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_075-polyinstru-Comme_un_phare_sur_la_plage.mid"
+            "pdfA4": "CV_075-Comme_un_phare_sur_la_plage_A4-avecMusique.pdf",
+            "instruMidi": "CV_075-polyinstru-Comme_un_phare_sur_la_plage.mid"
         },
         {
             "numero": "77",
             "titre": "Reviens à ton Père",
-            "pdfA4": "CV/CV_077-Reviens_a_ton_Pere_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_077-polyinstru-Reviens_a_ton_Pere.mid"
+            "pdfA4": "CV_077-Reviens_a_ton_Pere_A4-avecMusique.pdf",
+            "instruMidi": "CV_077-polyinstru-Reviens_a_ton_Pere.mid"
         },
         {
             "numero": "79",
             "titre": "Il est un roc séculaire",
-            "pdfA4": "CV/CV_079-Il_est_un_roc_seculaire_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_079-polyinstru-Il_est_un_roc_seculaire.mid"
+            "pdfA4": "CV_079-Il_est_un_roc_seculaire_A4-avecMusique.pdf",
+            "instruMidi": "CV_079-polyinstru-Il_est_un_roc_seculaire.mid"
         },
         {
             "numero": "84",
             "titre": "Nous voguons vers un beau rivage",
-            "pdfA4": "CV/CV_084-Nous_voguons_vers_un_beau_rivage_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_084-polyinstru-Nous_voguons_vers_un_beau_rivage.mid"
+            "pdfA4": "CV_084-Nous_voguons_vers_un_beau_rivage_A4-avecMusique.pdf",
+            "instruMidi": "CV_084-polyinstru-Nous_voguons_vers_un_beau_rivage.mid"
         },
         {
             "numero": "86",
             "titre": "Venez au Sauveur qui vous aime",
-            "pdfA4": "CV/CV_086-Venez_au_Sauveur_qui_vous_aime_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_086-polyinstru-Venez_au_Sauveur_qui_vous_aime.mid"
+            "pdfA4": "CV_086-Venez_au_Sauveur_qui_vous_aime_A4-avecMusique.pdf",
+            "instruMidi": "CV_086-polyinstru-Venez_au_Sauveur_qui_vous_aime.mid"
         },
         {
             "numero": "87",
             "titre": "C'est encore temps!",
-            "pdfA4": "CV/CV_087-Cest_encore_temps_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_087-polyinstru-Cest_encore_temps.mid"
+            "pdfA4": "CV_087-Cest_encore_temps_A4-avecMusique.pdf",
+            "instruMidi": "CV_087-polyinstru-Cest_encore_temps.mid"
         },
         {
             "numero": "90",
             "titre": "Viens! âme perdue",
-            "pdfA4": "CV/CV_090-Viens_ame_perdue_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_090-polyinstru-Viens_ame_perdue.mid"
+            "pdfA4": "CV_090-Viens_ame_perdue_A4-avecMusique.pdf",
+            "instruMidi": "CV_090-polyinstru-Viens_ame_perdue.mid"
         },
         {
             "numero": "94",
             "titre": "Par ce chemin solitaire",
-            "pdfA4": "CV/CV_094-Par_ce_chemin_solitaire_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_094-polyinstru-Par_ce_chemin_solitaire.mid"
+            "pdfA4": "CV_094-Par_ce_chemin_solitaire_A4-avecMusique.pdf",
+            "instruMidi": "CV_094-polyinstru-Par_ce_chemin_solitaire.mid"
         },
         {
             "numero": "102",
             "titre": "Viens au Père",
-            "pdfA4": "CV/CV_102-Viens_au_Pere_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_102-polyinstru-Viens_au_Pere.mid"
+            "pdfA4": "CV_102-Viens_au_Pere_A4-avecMusique.pdf",
+            "instruMidi": "CV_102-polyinstru-Viens_au_Pere.mid"
         },
         {
             "numero": "104",
             "titre": "Bientôt le Seigneur va venir",
-            "pdfA4": "CV/CV_104-Bientot_le_Seigneur_va_venir_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_104-polyinstru-Bientot_le_Seigneur_va_venir.mid"
+            "pdfA4": "CV_104-Bientot_le_Seigneur_va_venir_A4-avecMusique.pdf",
+            "instruMidi": "CV_104-polyinstru-Bientot_le_Seigneur_va_venir.mid"
         },
         {
             "numero": "105",
             "titre": "Pécheur, je voudrais te guérir",
-            "pdfA4": "CV/CV_105-Pecheur_je_voudrais_te_guerir_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_105-polyinstru-Pecheur_je_voudrais_te_guerir.mid"
+            "pdfA4": "CV_105-Pecheur_je_voudrais_te_guerir_A4-avecMusique.pdf",
+            "instruMidi": "CV_105-polyinstru-Pecheur_je_voudrais_te_guerir.mid"
         },
         {
             "numero": "107",
             "titre": "Une bonne nouvelle",
-            "pdfA4": "CV/CV_107-Une_bonne_nouvelle_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_107-polyinstru-Une_bonne_nouvelle.mid"
+            "pdfA4": "CV_107-Une_bonne_nouvelle_A4-avecMusique.pdf",
+            "instruMidi": "CV_107-polyinstru-Une_bonne_nouvelle.mid"
         },
         {
             "numero": "108",
             "titre": "Dis tout à Jésus",
-            "pdfA4": "CV/CV_108-Dis_tout_a_Jesus_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_108-polyinstru-Dis_tout_a_Jesus.mid"
+            "pdfA4": "CV_108-Dis_tout_a_Jesus_A4-avecMusique.pdf",
+            "instruMidi": "CV_108-polyinstru-Dis_tout_a_Jesus.mid"
         },
         {
             "numero": "111",
             "titre": "Publiez bien haut",
-            "pdfA4": "CV/CV_111-Publiez_bien_haut_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_111-polyinstru-Publiez_bien_haut.mid"
+            "pdfA4": "CV_111-Publiez_bien_haut_A4-avecMusique.pdf",
+            "instruMidi": "CV_111-polyinstru-Publiez_bien_haut.mid"
         },
         {
             "numero": "112",
             "titre": "Jesus frappe à votre porte, ouvrez aujourd'hui",
-            "pdfA4": "CV/CV_112-Jesus_frappe_a_votre_porte_ouvrez_aujourd_hui_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_112-polyinstru-Jesus_frappe_a_votre_porte_ouvrez_aujourd_hui.mid"
+            "pdfA4": "CV_112-Jesus_frappe_a_votre_porte_ouvrez_aujourd_hui_A4-avecMusique.pdf",
+            "instruMidi": "CV_112-polyinstru-Jesus_frappe_a_votre_porte_ouvrez_aujourd_hui.mid"
         },
         {
             "numero": "115",
             "titre": "Où cherchez-vous le bonheur?",
-            "pdfA4": "CV/CV_115-Ou_cherchez_vous_le_bonheur_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_115-polyinstru-Ou_cherchez_vous_le_bonheur.mid"
+            "pdfA4": "CV_115-Ou_cherchez_vous_le_bonheur_A4-avecMusique.pdf",
+            "instruMidi": "CV_115-polyinstru-Ou_cherchez_vous_le_bonheur.mid"
         },
         {
             "numero": "120",
             "titre": "Blanc, plus blanc que neige",
-            "pdfA4": "CV/CV_120-Jesus_par_ton_sang_precieux_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_120-polyinstru-Jesus_par_ton_sang_precieux.mid"
+            "pdfA4": "CV_120-Jesus_par_ton_sang_precieux_A4-avecMusique.pdf",
+            "instruMidi": "CV_120-polyinstru-Jesus_par_ton_sang_precieux.mid"
         },
         {
             "numero": "122",
             "titre": "Source féconde",
-            "pdfA4": "CV/CV_122-Source_feconde_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_122-polyinstru-Source_feconde.mid"
+            "pdfA4": "CV_122-Source_feconde_A4-avecMusique.pdf",
+            "instruMidi": "CV_122-polyinstru-Source_feconde.mid"
         },
         {
             "numero": "126",
             "titre": "Roc séculaire, frappé pour moi (cf. CJ 15)",
-            "pdfA4": "CV/CV_126-Roc_seculaire_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_126-polyinstru-Roc_seculaire.mid"
+            "pdfA4": "CV_126-Roc_seculaire_A4-avecMusique.pdf",
+            "instruMidi": "CV_126-polyinstru-Roc_seculaire.mid"
         },
         {
             "numero": "127",
             "titre": "Joie au ciel, le prodigue est de retour",
-            "pdfA4": "CV/CV_127-Joie_au_ciel_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_127-polyinstru-Joie_au_ciel.mid"
+            "pdfA4": "CV_127-Joie_au_ciel_A4-avecMusique.pdf",
+            "instruMidi": "CV_127-polyinstru-Joie_au_ciel.mid"
         },
         {
             "numero": "128",
             "titre": "Seigneur, ta grâce m'appelle",
-            "pdfA4": "CV/CV_128-Seigneur_ta_grace_m_appelle_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_128-polyinstru-Seigneur_ta_grace_m_appelle.mid"
+            "pdfA4": "CV_128-Seigneur_ta_grace_m_appelle_A4-avecMusique.pdf",
+            "instruMidi": "CV_128-polyinstru-Seigneur_ta_grace_m_appelle.mid"
         },
         {
             "numero": "131",
             "titre": "Miséricord insondable",
-            "pdfA4": "CV/CV_131-Misericorde_insondable_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_131-polyinstru-Misericorde_insondable.mid"
+            "pdfA4": "CV_131-Misericorde_insondable_A4-avecMusique.pdf",
+            "instruMidi": "CV_131-polyinstru-Misericorde_insondable.mid"
         },
         {
             "numero": "132",
             "titre": "Torrents d'amour et de grâce",
-            "pdfA4": "CV/CV_132-Torrents_d_amour_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_132-polyinstru-Torrents_d_amour.mid"
+            "pdfA4": "CV_132-Torrents_d_amour_A4-avecMusique.pdf",
+            "instruMidi": "CV_132-polyinstru-Torrents_d_amour.mid"
         },
         {
             "numero": "135",
             "titre": "Veux-tu briser du péché le pouvoir",
-            "pdfA4": "CV/CV_135-Veux_tu_briser_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_135-polyinstru-Veux_tu_briser.mid"
+            "pdfA4": "CV_135-Veux_tu_briser_A4-avecMusique.pdf",
+            "instruMidi": "CV_135-polyinstru-Veux_tu_briser.mid"
         },
         {
             "numero": "143",
             "titre": "Fraîches rosées",
-            "pdfA4": "CV/CV_143-Comme_une_terre_alteree_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_143-polyinstru-Comme_une_terre_alteree.mid"
+            "pdfA4": "CV_143-Comme_une_terre_alteree_A4-avecMusique.pdf",
+            "instruMidi": "CV_143-polyinstru-Comme_une_terre_alteree.mid"
         },
         {
             "numero": null,
             "titre": "Jésus, ta sainte présence",
-            "pdfA4": "CV/CV_147a-Jesus_ta_sainte_presence_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_147a-polyinstru-Jesus_ta_sainte_presence.mid"
+            "pdfA4": "CV_147a-Jesus_ta_sainte_presence_A4-avecMusique.pdf",
+            "instruMidi": "CV_147a-polyinstru-Jesus_ta_sainte_presence.mid"
         },
         {
             "numero": "148",
             "titre": "Jésus est au milieu de nous",
-            "pdfA4": "CV/CV_148-Jesus_est_au_milieu_de_nous_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_148-polyinstru-Jesus_est_au_milieu_de_nous.mid"
+            "pdfA4": "CV_148-Jesus_est_au_milieu_de_nous_A4-avecMusique.pdf",
+            "instruMidi": "CV_148-polyinstru-Jesus_est_au_milieu_de_nous.mid"
         },
         {
             "numero": null,
             "titre": "Toi qui disposes",
-            "pdfA4": "CV/CV_149a-Toi_qui_disposes_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_149a-polyinstru-Toi_qui_disposes.mid"
+            "pdfA4": "CV_149a-Toi_qui_disposes_A4-avecMusique.pdf",
+            "instruMidi": "CV_149a-polyinstru-Toi_qui_disposes.mid"
         },
         {
             "numero": "161",
             "titre": "Écoutez l'appel du Berger",
-            "pdfA4": "CV/CV_161-Ecoutez_l_appel_du_Berger_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_161-polyinstru-Ecoutez_l_appel_du_Berger.mid"
+            "pdfA4": "CV_161-Ecoutez_l_appel_du_Berger_A4-avecMusique.pdf",
+            "instruMidi": "CV_161-polyinstru-Ecoutez_l_appel_du_Berger.mid"
         },
         {
             "numero": "162",
             "titre": "Ah! que je ne sois pas",
-            "pdfA4": "CV/CV_162-Ah_que_je_ne_sois_pas_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_162-polyinstru-Ah_que_je_ne_sois_pas.mid"
+            "pdfA4": "CV_162-Ah_que_je_ne_sois_pas_A4-avecMusique.pdf",
+            "instruMidi": "CV_162-polyinstru-Ah_que_je_ne_sois_pas.mid"
         },
         {
             "numero": "166",
             "titre": "Qu'il fait bon à ton service",
-            "pdfA4": "CV/CV_166-Qu_il_fait_bon_a_ton_service_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_166-polyinstru-Qu_il_fait_bon_a_ton_service.mid"
+            "pdfA4": "CV_166-Qu_il_fait_bon_a_ton_service_A4-avecMusique.pdf",
+            "instruMidi": "CV_166-polyinstru-Qu_il_fait_bon_a_ton_service.mid"
         },
         {
             "numero": "167",
             "titre": "C'est mon joyeux service",
-            "pdfA4": "CV/CV_167-C_est_mon_joyeux_service_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_167-polyinstru-C_est_mon_joyeux_service.mid"
+            "pdfA4": "CV_167-C_est_mon_joyeux_service_A4-avecMusique.pdf",
+            "instruMidi": "CV_167-polyinstru-C_est_mon_joyeux_service.mid"
         },
         {
             "numero": null,
             "titre": "Entre tes mains j'abandonne (original anglais)",
-            "pdfA4": "CV/CV_172a-Entre_tes_mains_j_abandonne_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_172a-polyinstru-Entre_tes_mains_j_abandonne.mid"
+            "pdfA4": "CV_172a-Entre_tes_mains_j_abandonne_A4-avecMusique.pdf",
+            "instruMidi": "CV_172a-polyinstru-Entre_tes_mains_j_abandonne.mid"
         },
         {
             "numero": "174",
             "titre": "Seul refuge de mon âme",
-            "pdfA4": "CV/CV_174-Seul_refuge_de_mon_ame_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_174-polyinstru-Seul_refuge_de_mon_ame.mid"
+            "pdfA4": "CV_174-Seul_refuge_de_mon_ame_A4-avecMusique.pdf",
+            "instruMidi": "CV_174-polyinstru-Seul_refuge_de_mon_ame.mid"
         },
         {
             "numero": "175",
             "titre": "L'amour de Jésus Christ nous presse",
-            "pdfA4": "CV/CV_175-L_amour_de_Jesus-Christ_nous_presse_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_175-polyinstru-L_amour_de_Jesus-Christ_nous_presse.mid"
+            "pdfA4": "CV_175-L_amour_de_Jesus-Christ_nous_presse_A4-avecMusique.pdf",
+            "instruMidi": "CV_175-polyinstru-L_amour_de_Jesus-Christ_nous_presse.mid"
         },
         {
             "numero": "180",
             "titre": "La voix du Seigneur m'appelle",
-            "pdfA4": "CV/CV_180-La_voix_du_Seigneur_m_appelle_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_180-polyinstru-La_voix_du_Seigneur_m_appelle.mid"
+            "pdfA4": "CV_180-La_voix_du_Seigneur_m_appelle_A4-avecMusique.pdf",
+            "instruMidi": "CV_180-polyinstru-La_voix_du_Seigneur_m_appelle.mid"
         },
         {
             "numero": "184",
             "titre": "Viens, mon âme te réclame",
-            "pdfA4": "CV/CV_184-Viens_mon_ame_te_reclame_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_184-polyinstru-Viens_mon_ame_te_reclame.mid"
+            "pdfA4": "CV_184-Viens_mon_ame_te_reclame_A4-avecMusique.pdf",
+            "instruMidi": "CV_184-polyinstru-Viens_mon_ame_te_reclame.mid"
         },
         {
             "numero": "187",
             "titre": "C'est un rempart que notre Dieu",
-            "pdfA4": "CV/CV_187-C_est_un_rempart_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_187-polyinstru-C_est_un_rempart.mid"
+            "pdfA4": "CV_187-C_est_un_rempart_A4-avecMusique.pdf",
+            "instruMidi": "CV_187-polyinstru-C_est_un_rempart.mid"
         },
         {
             "numero": "188",
             "titre": "Plus que vainqueur",
-            "pdfA4": "CV/CV_188-Plus_que_vainqueurs_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_188-polyinstru-Plus_que_vainqueurs.mid"
+            "pdfA4": "CV_188-Plus_que_vainqueurs_A4-avecMusique.pdf",
+            "instruMidi": "CV_188-polyinstru-Plus_que_vainqueurs.mid"
         },
         {
             "numero": "191",
             "titre": "Jusqu'à ta venue",
-            "pdfA4": "CV/CV_191-Jusqu_a_ta_venue_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_191-polyinstru-Jusqu_a_ta_venue.mid"
+            "pdfA4": "CV_191-Jusqu_a_ta_venue_A4-avecMusique.pdf",
+            "instruMidi": "CV_191-polyinstru-Jusqu_a_ta_venue.mid"
         },
         {
             "numero": "193",
             "titre": "Le signal de la victoire",
-            "pdfA4": "CV/CV_193-Le_signal_de_la_victoire_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_193-polyinstru-Le_signal_de_la_victoire.mid"
+            "pdfA4": "CV_193-Le_signal_de_la_victoire_A4-avecMusique.pdf",
+            "instruMidi": "CV_193-polyinstru-Le_signal_de_la_victoire.mid"
         },
         {
             "numero": "194",
             "titre": "Sans attendre",
-            "pdfA4": "CV/CV_194-Sans_attendre_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_194-polyinstru-Sans_attendre.mid"
+            "pdfA4": "CV_194-Sans_attendre_A4-avecMusique.pdf",
+            "instruMidi": "CV_194-polyinstru-Sans_attendre.mid"
         },
         {
             "numero": "200",
             "titre": "Veille toujours",
-            "pdfA4": "CV/CV_200-Veille_toujours_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_200-polyinstru-Veille_toujours.mid"
+            "pdfA4": "CV_200-Veille_toujours_A4-avecMusique.pdf",
+            "instruMidi": "CV_200-polyinstru-Veille_toujours.mid"
         },
         {
             "numero": "201",
             "titre": "À celui qui sera vainqueur",
-            "pdfA4": "CV/CV_201-A_celui_qui_sera_vainqueur_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_201-polyinstru-A_celui_qui_sera_vainqueur.mid"
+            "pdfA4": "CV_201-A_celui_qui_sera_vainqueur_A4-avecMusique.pdf",
+            "instruMidi": "CV_201-polyinstru-A_celui_qui_sera_vainqueur.mid"
         },
         {
             "numero": "202",
             "titre": "Vous qui gardez les murs",
-            "pdfA4": "CV/CV_202-Vous_qui_gardez_les_murs_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_202-polyinstru-Vous_qui_gardez_les_murs.mid"
+            "pdfA4": "CV_202-Vous_qui_gardez_les_murs_A4-avecMusique.pdf",
+            "instruMidi": "CV_202-polyinstru-Vous_qui_gardez_les_murs.mid"
         },
         {
             "numero": "203",
             "titre": "Sentinelle vigilante",
-            "pdfA4": "CV/CV_203-mono-piano-Sentinelle_vigilante_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_203-polyinstru-Sentinelle_vigilante.mid"
+            "pdfA4": "CV_203-mono-piano-Sentinelle_vigilante_A4-avecMusique.pdf",
+            "instruMidi": "CV_203-polyinstru-Sentinelle_vigilante.mid"
         },
         {
             "numero": null,
             "titre": "Debout, sainte cohorte!",
-            "pdfA4": "CV/CV_204a-mono-piano-Debout_sainte_cohorte_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_204a-polyinstru-Debout_sainte_cohorte.mid"
+            "pdfA4": "CV_204a-mono-piano-Debout_sainte_cohorte_A4-avecMusique.pdf",
+            "instruMidi": "CV_204a-polyinstru-Debout_sainte_cohorte.mid"
         },
         {
             "numero": "205",
             "titre": "Travaillons et luttons",
-            "pdfA4": "CV/CV_205-Travaillons_et_luttons_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_205-polyinstru-Travaillons_et_luttons.mid"
+            "pdfA4": "CV_205-Travaillons_et_luttons_A4-avecMusique.pdf",
+            "instruMidi": "CV_205-polyinstru-Travaillons_et_luttons.mid"
         },
         {
             "numero": "207",
             "titre": "Maître, entends-tu la tempête",
-            "pdfA4": "CV/CV_207-Maitre_entends-tu_la_tempete_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_207-polyinstru-Maitre_entends-tu_la_tempete.mid"
+            "pdfA4": "CV_207-Maitre_entends-tu_la_tempete_A4-avecMusique.pdf",
+            "instruMidi": "CV_207-polyinstru-Maitre_entends-tu_la_tempete.mid"
         },
         {
             "numero": "208",
             "titre": "Compte les bienfaits de Dieu",
-            "pdfA4": "CV/CV_208-Compte_les_bienfaits_de_Dieu_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_208-polyinstru-Compte_les_bienfaits_de_Dieu.mid"
+            "pdfA4": "CV_208-Compte_les_bienfaits_de_Dieu_A4-avecMusique.pdf",
+            "instruMidi": "CV_208-polyinstru-Compte_les_bienfaits_de_Dieu.mid"
         },
         {
             "numero": "210",
             "titre": "Une nacelle en silence",
-            "pdfA4": "CV/CV_210-Une_nacelle_en_silence_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_210-polyinstru-Une_nacelle_en_silence.mid"
+            "pdfA4": "CV_210-Une_nacelle_en_silence_A4-avecMusique.pdf",
+            "instruMidi": "CV_210-polyinstru-Une_nacelle_en_silence.mid"
         },
         {
             "numero": "211",
             "titre": "Tout est bien",
-            "pdfA4": "CV/CV_211-Tout_est_bien_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_211-polyinstru-Tout_est_bien.mid"
+            "pdfA4": "CV_211-Tout_est_bien_A4-avecMusique.pdf",
+            "instruMidi": "CV_211-polyinstru-Tout_est_bien.mid"
         },
         {
             "numero": "213",
             "titre": "Invoque-moi",
-            "pdfA4": "CV/CV_213-Invoque-moi_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_213-polyinstru-Invoque-moi.mid"
+            "pdfA4": "CV_213-Invoque-moi_A4-avecMusique.pdf",
+            "instruMidi": "CV_213-polyinstru-Invoque-moi.mid"
         },
         {
             "numero": null,
             "titre": "Oh! quelle paix parfaite",
-            "pdfA4": "CV/CV_215a-Oh_quelle_paix_parfaite_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_215a-polyinstru-Oh_quelle_paix_parfaite.mid"
+            "pdfA4": "CV_215a-Oh_quelle_paix_parfaite_A4-avecMusique.pdf",
+            "instruMidi": "CV_215a-polyinstru-Oh_quelle_paix_parfaite.mid"
         },
         {
             "numero": "219",
             "titre": "Dans ce triste monde",
-            "pdfA4": "CV/CV_219-Dans_ce_triste_monde_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_219-polyinstru-Dans_ce_triste_monde.mid"
+            "pdfA4": "CV_219-Dans_ce_triste_monde_A4-avecMusique.pdf",
+            "instruMidi": "CV_219-polyinstru-Dans_ce_triste_monde.mid"
         },
         {
             "numero": "221",
             "titre": "Tiens dans ta main, ta main fidèle et forte (original anglais HWR 373)",
-            "pdfA4": "CV/CV_221-mono-piano-Tiens_dans_ta_main_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_221-polyinstru-Tiens_dans_ta_main.mid"
+            "pdfA4": "CV_221-mono-piano-Tiens_dans_ta_main_A4-avecMusique.pdf",
+            "instruMidi": "CV_221-polyinstru-Tiens_dans_ta_main.mid"
         },
         {
             "numero": "222",
             "titre": "Ton fidèle amour",
-            "pdfA4": "CV/CV_222-Ton_fidele_amour_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_222-polyinstru-Ton_fidele_amour.mid"
+            "pdfA4": "CV_222-Ton_fidele_amour_A4-avecMusique.pdf",
+            "instruMidi": "CV_222-polyinstru-Ton_fidele_amour.mid"
         },
         {
             "numero": "223",
             "titre": "À Jésus je m'abandonne (= ATG 329)",
-            "pdfA4": "CV/CV_223-A_Jesus_je_m_abandonne_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_223-polyinstru-A_Jesus_je_m_abandonne.mid"
+            "pdfA4": "CV_223-A_Jesus_je_m_abandonne_A4-avecMusique.pdf",
+            "instruMidi": "CV_223-polyinstru-A_Jesus_je_m_abandonne.mid"
         },
         {
             "numero": "224",
             "titre": "Comme un fleuve immense",
-            "pdfA4": "CV/CV_224-Comme_un_fleuve_immense_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_224-polyinstru-Comme_un_fleuve_immense.mid"
+            "pdfA4": "CV_224-Comme_un_fleuve_immense_A4-avecMusique.pdf",
+            "instruMidi": "CV_224-polyinstru-Comme_un_fleuve_immense.mid"
         },
         {
             "numero": "226",
             "titre": "Ne crains pas",
-            "pdfA4": "CV/CV_226-Ne_crains_rien_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_226-polyinstru-Ne_crains_rien.mid"
+            "pdfA4": "CV_226-Ne_crains_rien_A4-avecMusique.pdf",
+            "instruMidi": "CV_226-polyinstru-Ne_crains_rien.mid"
         },
         {
             "numero": "230",
             "titre": "Un chrétien je croyais être",
-            "pdfA4": "CV/CV_230-Un_chretien_je_croyait_etre_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_230-polyinstru-Un_chretien_je_croyait_etre.mid"
+            "pdfA4": "CV_230-Un_chretien_je_croyait_etre_A4-avecMusique.pdf",
+            "instruMidi": "CV_230-polyinstru-Un_chretien_je_croyait_etre.mid"
         },
         {
             "numero": "233",
             "titre": "Je ne sais pourquoi Dieu dans sa grâce.. mais je sais...",
-            "pdfA4": "CV/CV_233-mono-piano-Je_sais_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_233-polyinstru-Je_sais.mid"
+            "pdfA4": "CV_233-mono-piano-Je_sais_A4-avecMusique.pdf",
+            "instruMidi": "CV_233-polyinstru-Je_sais.mid"
         },
         {
             "numero": "234",
             "titre": "Quel ami fidèle et tendre! (original anglais)",
-            "pdfA4": "CV/CV_234-Quel_ami_fidele_et_tendre_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_234-polyinstru-Quel_ami_fidele_et_tendre.mid"
+            "pdfA4": "CV_234-Quel_ami_fidele_et_tendre_A4-avecMusique.pdf",
+            "instruMidi": "CV_234-polyinstru-Quel_ami_fidele_et_tendre.mid"
         },
         {
             "numero": "236",
             "titre": "Oh! jour béni, jour de victoire",
-            "pdfA4": "CV/CV_236-O_jour_beni_jour_de_victoire_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_236-polyinstru-O_jour_beni_jour_de_victoire.mid"
+            "pdfA4": "CV_236-O_jour_beni_jour_de_victoire_A4-avecMusique.pdf",
+            "instruMidi": "CV_236-polyinstru-O_jour_beni_jour_de_victoire.mid"
         },
         {
             "numero": "237",
             "titre": "Aux jours d'angoisse et de souffrance",
-            "pdfA4": "CV/CV_237-Aux_jours_d_angoisse_et_de_souffrance_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_237-polyinstru-Aux_jours_d_angoisse_et_de_souffrance.mid"
+            "pdfA4": "CV_237-Aux_jours_d_angoisse_et_de_souffrance_A4-avecMusique.pdf",
+            "instruMidi": "CV_237-polyinstru-Aux_jours_d_angoisse_et_de_souffrance.mid"
         },
         {
             "numero": "238",
             "titre": "Oui, selon ta promesse",
-            "pdfA4": "CV/CV_238-Oui_selon_ta_promesse_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_238-polyinstru-Oui_selon_ta_promesse.mid"
+            "pdfA4": "CV_238-Oui_selon_ta_promesse_A4-avecMusique.pdf",
+            "instruMidi": "CV_238-polyinstru-Oui_selon_ta_promesse.mid"
         },
         {
             "numero": "240",
             "titre": "Un seul pas à la fois",
-            "pdfA4": "CV/CV_240-Un_seul_pas_a_la_fois_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_240-polyinstru-Un_seul_pas_a_la_fois.mid"
+            "pdfA4": "CV_240-Un_seul_pas_a_la_fois_A4-avecMusique.pdf",
+            "instruMidi": "CV_240-polyinstru-Un_seul_pas_a_la_fois.mid"
         },
         {
             "numero": "241",
             "titre": "Saisis ma main craintive",
-            "pdfA4": "CV/CV_241-Saisis_ma_main_craintive_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_241-polyinstru-Saisis_ma_main_craintive.mid"
+            "pdfA4": "CV_241-Saisis_ma_main_craintive_A4-avecMusique.pdf",
+            "instruMidi": "CV_241-polyinstru-Saisis_ma_main_craintive.mid"
         },
         {
             "numero": "243",
             "titre": "Quel repos céleste",
-            "pdfA4": "CV/CV_243-mono-piano-Quel_repos_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_243-polyinstru-Quel_repos.mid"
+            "pdfA4": "CV_243-mono-piano-Quel_repos_A4-avecMusique.pdf",
+            "instruMidi": "CV_243-polyinstru-Quel_repos.mid"
         },
         {
             "numero": "246",
             "titre": "C'est à l'ombre de tes ailes qu'est le vrai repos",
-            "pdfA4": "CV/CV_246-A_lombre_de_tes_ailes_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_246-polyinstru-A_lombre_de_tes_ailes.mid"
+            "pdfA4": "CV_246-A_lombre_de_tes_ailes_A4-avecMusique.pdf",
+            "instruMidi": "CV_246-polyinstru-A_lombre_de_tes_ailes.mid"
         },
         {
             "numero": "249",
             "titre": "J'ai soif de ta présence",
-            "pdfA4": "CV/CV_249-J_ai_soif_de_ta_presence_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_249-polyinstru-J_ai_soif_de_ta_presence.mid"
+            "pdfA4": "CV_249-J_ai_soif_de_ta_presence_A4-avecMusique.pdf",
+            "instruMidi": "CV_249-polyinstru-J_ai_soif_de_ta_presence.mid"
         },
         {
             "numero": "251",
             "titre": "Ici pleurer et souffrir",
-            "pdfA4": "CV/CV_251-mono-piano-Ici_pleurer_et_souffrir_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_251-polyinstru-Ici_pleurer_et_souffrir.mid"
+            "pdfA4": "CV_251-mono-piano-Ici_pleurer_et_souffrir_A4-avecMusique.pdf",
+            "instruMidi": "CV_251-polyinstru-Ici_pleurer_et_souffrir.mid"
         },
         {
             "numero": "252",
             "titre": "Voir mon Sauveur face à face",
-            "pdfA4": "CV/CV_252-Voir_mon_Sauveur_face_a_face_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_252-polyinstru-Voir_mon_Sauveur_face_a_face.mid"
+            "pdfA4": "CV_252-Voir_mon_Sauveur_face_a_face_A4-avecMusique.pdf",
+            "instruMidi": "CV_252-polyinstru-Voir_mon_Sauveur_face_a_face.mid"
         },
         {
             "numero": "253",
             "titre": "La trompette a retenti",
-            "pdfA4": "CV/CV_253-La_trompette_a_retenti_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_253-polyinstru-La_trompette_a_retenti.mid"
+            "pdfA4": "CV_253-La_trompette_a_retenti_A4-avecMusique.pdf",
+            "instruMidi": "CV_253-polyinstru-La_trompette_a_retenti.mid"
         },
         {
             "numero": "254",
             "titre": "Il va venir le Seigneur que j'adore",
-            "pdfA4": "CV/CV_254-Il_va_venir_le_Seigneur_que_jadore_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_254-polyinstru-Il_va_venir_le_Seigneur_que_jadore.mid"
+            "pdfA4": "CV_254-Il_va_venir_le_Seigneur_que_jadore_A4-avecMusique.pdf",
+            "instruMidi": "CV_254-polyinstru-Il_va_venir_le_Seigneur_que_jadore.mid"
         },
         {
             "numero": "257",
             "titre": "Je ne sais pas le jour",
-            "pdfA4": "CV/CV_257-Je_ne_sais_pas_le_jour_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_257-polyinstru-Je_ne_sais_pas_le_jour.mid"
+            "pdfA4": "CV_257-Je_ne_sais_pas_le_jour_A4-avecMusique.pdf",
+            "instruMidi": "CV_257-polyinstru-Je_ne_sais_pas_le_jour.mid"
         },
         {
             "numero": "261",
             "titre": "Nombreux comme le sable des plages",
-            "pdfA4": "CV/CV_261-Nombreux_comme_le_sable_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_261-polyinstru-Nombreux_comme_le_sable.mid"
+            "pdfA4": "CV_261-Nombreux_comme_le_sable_A4-avecMusique.pdf",
+            "instruMidi": "CV_261-polyinstru-Nombreux_comme_le_sable.mid"
         },
         {
             "numero": "264",
             "titre": "Avec allégresse",
-            "pdfA4": "CV/CV_264-Avec_allegresse_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_264-polyinstru-Avec_allegresse.mid"
+            "pdfA4": "CV_264-Avec_allegresse_A4-avecMusique.pdf",
+            "instruMidi": "CV_264-polyinstru-Avec_allegresse.mid"
         },
         {
             "numero": "265",
             "titre": "Vers le ciel",
-            "pdfA4": "CV/CV_265-Vers_le_ciel_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_265-polyinstru-Vers_le_ciel.mid"
+            "pdfA4": "CV_265-Vers_le_ciel_A4-avecMusique.pdf",
+            "instruMidi": "CV_265-polyinstru-Vers_le_ciel.mid"
         },
         {
             "numero": "268",
             "titre": "Pèlerin sur cette terre",
-            "pdfA4": "CV/CV_268-Pelerin_sur_cette_terre_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_268-polyinstru-Pelerin_sur_cette_terre.mid"
+            "pdfA4": "CV_268-Pelerin_sur_cette_terre_A4-avecMusique.pdf",
+            "instruMidi": "CV_268-polyinstru-Pelerin_sur_cette_terre.mid"
         },
         {
             "numero": "272",
             "titre": "Connais-tu cette cité",
-            "pdfA4": "CV/CV_272-Connais_tu_cette_cite_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_272-polyinstru-Connais_tu_cette_cite-soprano.mid"
+            "pdfA4": "CV_272-Connais_tu_cette_cite_A4-avecMusique.pdf",
+            "instruMidi": "CV_272-polyinstru-Connais_tu_cette_cite-soprano.mid"
         },
         {
             "numero": "273",
             "titre": "Contempler mon Dieu sur son trône",
-            "pdfA4": "CV/CV_273-Contempler_mon_Dieu_sur_son_trone_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_273-polyinstru-Contempler_mon_Dieu_sur_son_trone.mid"
+            "pdfA4": "CV_273-Contempler_mon_Dieu_sur_son_trone_A4-avecMusique.pdf",
+            "instruMidi": "CV_273-polyinstru-Contempler_mon_Dieu_sur_son_trone.mid"
         },
         {
             "numero": "274",
             "titre": "Au ciel est la maison du Père",
-            "pdfA4": "CV/CV_274-Au_ciel_est_la_maison_du_Pere_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_274-polyinstru-Au_ciel_est_la_maison_du_Pere.mid"
+            "pdfA4": "CV_274-Au_ciel_est_la_maison_du_Pere_A4-avecMusique.pdf",
+            "instruMidi": "CV_274-polyinstru-Au_ciel_est_la_maison_du_Pere.mid"
         },
         {
             "numero": "275",
             "titre": "Nous attendons le Sauveur glorieux",
-            "pdfA4": "CV/CV_275-Nous_attendons_le_Sauveur_glorieux_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_275-polyinstru-Nous_attendons_le_Sauveur_glorieux.mid"
+            "pdfA4": "CV_275-Nous_attendons_le_Sauveur_glorieux_A4-avecMusique.pdf",
+            "instruMidi": "CV_275-polyinstru-Nous_attendons_le_Sauveur_glorieux.mid"
         },
         {
             "numero": "279",
             "titre": "Béni soit le lien",
-            "pdfA4": "CV/CV_279-Beni_soit_le_lien_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_279-polyinstru-Beni_soit_le_lien.mid"
+            "pdfA4": "CV_279-Beni_soit_le_lien_A4-avecMusique.pdf",
+            "instruMidi": "CV_279-polyinstru-Beni_soit_le_lien.mid"
         },
         {
             "numero": "286",
             "titre": "Chant d'adieu",
-            "pdfA4": "CV/CV_286-Chant_d_adieu_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_286-polyinstru-Chant_d_adieu.mid"
+            "pdfA4": "CV_286-Chant_d_adieu_A4-avecMusique.pdf",
+            "instruMidi": "CV_286-polyinstru-Chant_d_adieu.mid"
         },
         {
             "numero": "288",
             "titre": "Le chant du réveil",
-            "pdfA4": "CV/CV_288-Le_Chant_du_Reveil_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_288-polyinstru-Le_Chant_du_Reveil.mid"
+            "pdfA4": "CV_288-Le_Chant_du_Reveil_A4-avecMusique.pdf",
+            "instruMidi": "CV_288-polyinstru-Le_Chant_du_Reveil.mid"
         },
         {
             "numero": "290",
             "titre": "Christ est ma portion",
-            "pdfA4": "CV/CV_290-Christ_est_ma_portion_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_290-polyinstru-Christ_est_ma_portion.mid"
+            "pdfA4": "CV_290-Christ_est_ma_portion_A4-avecMusique.pdf",
+            "instruMidi": "CV_290-polyinstru-Christ_est_ma_portion.mid"
         },
         {
             "numero": "292",
             "titre": "Suivez, suivez l'Agneau",
-            "pdfA4": "CV/CV_292-Suivez_l_Agneau_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_292-polyinstru-Suivez_l_Agneau.mid"
+            "pdfA4": "CV_292-Suivez_l_Agneau_A4-avecMusique.pdf",
+            "instruMidi": "CV_292-polyinstru-Suivez_l_Agneau.mid"
         },
         {
             "numero": "293",
             "titre": "Tout joyeux, bénissons le Seigneur",
-            "pdfA4": "CV/CV_293-Tout_joyeux_benissons_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_293-polyinstru-Tout_joyeux_benissons.mid"
+            "pdfA4": "CV_293-Tout_joyeux_benissons_A4-avecMusique.pdf",
+            "instruMidi": "CV_293-polyinstru-Tout_joyeux_benissons.mid"
         },
         {
             "numero": "294",
             "titre": "Je suis petit, mais que m'importe",
-            "pdfA4": "CV/CV_294-Je_suis_petit_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_294-polyinstru-Je_suis_petit.mid"
+            "pdfA4": "CV_294-Je_suis_petit_A4-avecMusique.pdf",
+            "instruMidi": "CV_294-polyinstru-Je_suis_petit.mid"
         },
         {
             "numero": "295",
             "titre": "Nul enfant n'est trop petit pour la route étroite",
-            "pdfA4": "CV/CV_295-Nul_enfant_nest_trop_petit_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_295-polyinstru-Nul_enfant_nest_trop_petit.mid"
+            "pdfA4": "CV_295-Nul_enfant_nest_trop_petit_A4-avecMusique.pdf",
+            "instruMidi": "CV_295-polyinstru-Nul_enfant_nest_trop_petit.mid"
         },
         {
             "numero": "298",
             "titre": "Bientôt Jésus va nous prendre",
-            "pdfA4": "CV/CV_298-Bientot_Jesus_va_nous_prendre_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_298-polyinstru-Bientot_Jesus_va_nous_prendre.mid"
+            "pdfA4": "CV_298-Bientot_Jesus_va_nous_prendre_A4-avecMusique.pdf",
+            "instruMidi": "CV_298-polyinstru-Bientot_Jesus_va_nous_prendre.mid"
         },
         {
             "numero": "299",
             "titre": "Je suis la lumière",
-            "pdfA4": "CV/CV_299-Je_suis_la_lumiere_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_299-polyinstru-Je_suis_la_lumiere.mid"
+            "pdfA4": "CV_299-Je_suis_la_lumiere_A4-avecMusique.pdf",
+            "instruMidi": "CV_299-polyinstru-Je_suis_la_lumiere.mid"
         },
         {
             "numero": "301",
             "titre": "Bon Sauveur, Berger fidèle",
-            "pdfA4": "CV/CV_301-Bon_Sauveur_berger_fidele_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_301-polyinstru-Bon_Sauveur_berger_fidele.mid"
+            "pdfA4": "CV_301-Bon_Sauveur_berger_fidele_A4-avecMusique.pdf",
+            "instruMidi": "CV_301-polyinstru-Bon_Sauveur_berger_fidele.mid"
         },
         {
             "numero": "302",
             "titre": "Le Seigneur m'aime",
-            "pdfA4": "CV/CV_302-Le_Seigneur_m_aime_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_302-polyinstru-Le_Seigneur_m_aime.mid"
+            "pdfA4": "CV_302-Le_Seigneur_m_aime_A4-avecMusique.pdf",
+            "instruMidi": "CV_302-polyinstru-Le_Seigneur_m_aime.mid"
         },
         {
             "numero": "303",
             "titre": "Sous le sang, le précieux sang",
-            "pdfA4": "CV/CV_303-Sous_le_sang_le_precieux_sang_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_303-polyinstru-Sous_le_sang_le_precieux_sang.mid"
+            "pdfA4": "CV_303-Sous_le_sang_le_precieux_sang_A4-avecMusique.pdf",
+            "instruMidi": "CV_303-polyinstru-Sous_le_sang_le_precieux_sang.mid"
         },
         {
             "numero": "304",
             "titre": "Jésus quitta le trône de son Père",
-            "pdfA4": "CV/CV_304-Jesus_quitta_le_trone_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_304-polyinstru-Jesus_quitta_le_trone.mid"
+            "pdfA4": "CV_304-Jesus_quitta_le_trone_A4-avecMusique.pdf",
+            "instruMidi": "CV_304-polyinstru-Jesus_quitta_le_trone.mid"
         },
         {
             "numero": "305",
             "titre": "Comme un rayon de soleil",
-            "pdfA4": "CV/CV_305-Rayon_de_soleil_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_305-polyinstru-Rayon_de_soleil.mid"
+            "pdfA4": "CV_305-Rayon_de_soleil_A4-avecMusique.pdf",
+            "instruMidi": "CV_305-polyinstru-Rayon_de_soleil.mid"
         },
         {
             "numero": "306",
             "titre": "Chaque jour de ma vie",
-            "pdfA4": "CV/CV_306-Chaque_jour_de_ma_vie_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_306-polyinstru-Chaque_jour_de_ma_vie.mid"
+            "pdfA4": "CV_306-Chaque_jour_de_ma_vie_A4-avecMusique.pdf",
+            "instruMidi": "CV_306-polyinstru-Chaque_jour_de_ma_vie.mid"
         },
         {
             "numero": "307",
             "titre": "Il est un pays magnifique",
-            "pdfA4": "CV/CV_307-Il_est_un_pays_magnifique_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_307-polyinstru-Il_est_un_pays_magnifique.mid"
+            "pdfA4": "CV_307-Il_est_un_pays_magnifique_A4-avecMusique.pdf",
+            "instruMidi": "CV_307-polyinstru-Il_est_un_pays_magnifique.mid"
         },
         {
             "numero": "309",
             "titre": "Jésus ne change pas",
-            "pdfA4": "CV/CV_309-Jesus_ne_change_pas_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_309-polyinstru-Jesus_ne_change_pas.mid"
+            "pdfA4": "CV_309-Jesus_ne_change_pas_A4-avecMusique.pdf",
+            "instruMidi": "CV_309-polyinstru-Jesus_ne_change_pas.mid"
         },
         {
             "numero": "310",
             "titre": "David n'avait rien que sa frone",
-            "pdfA4": "CV/CV_310-David_n_avait_rien_que_sa_fronde_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_310-polyinstru-David_n_avait_rien_que_sa_fronde.mid"
+            "pdfA4": "CV_310-David_n_avait_rien_que_sa_fronde_A4-avecMusique.pdf",
+            "instruMidi": "CV_310-polyinstru-David_n_avait_rien_que_sa_fronde.mid"
         },
         {
             "numero": "311",
             "titre": "Prière de l'enfant à son coucher",
-            "pdfA4": "CV/CV_311-priere_de_lenfant_a_son_coucher_A4-avecMusique.pdf",
-            "instruMidi": "CV/CV_311-polyinstru-priere_de_lenfant_a_son_coucher.mid"
+            "pdfA4": "CV_311-priere_de_lenfant_a_son_coucher_A4-avecMusique.pdf",
+            "instruMidi": "CV_311-polyinstru-priere_de_lenfant_a_son_coucher.mid"
         }
     ];
-    // Variables globales
-    const sampler = new Tone.PolySynth(Tone.Synth).toDestination();
-    let midi;
-    let playing = false;
-    let midiPlayer = null;
-    let midiParts = [];
-    let currentSongIndex = 0;
-    
-    // Ajout d'une map pour stocker les instruments et les pistes associées
-    let instrumentsAndTracks = new Map();
 
-    // Éléments du DOM
-    const playButton = document.getElementById('playButton');
-    const pauseButton = document.getElementById('pauseButton');
+    // Liste des instruments disponibles
+    const instruments = [
+      'acoustic_grand_piano', 'electric_piano_1', 'church_organ', 'string_ensemble_1', 'brass_section', 'orchestral_harp', 'synth_strings_1'
+    ];
+
+    let currentSongIndex = 0;
+    let currentMidi;
+    let synths = [];
+    let midiLoaded = false;
+    let loadedMidiUrl = null;
+
+    // Récupérer les éléments du DOM
+    const songSelect = document.getElementById('songSelect');
+    const playPauseButton = document.getElementById('playPauseButton');
+    const playPauseIcon = document.getElementById('playPauseIcon');
     const stopButton = document.getElementById('stopButton');
-    const loadButton = document.getElementById('loadButton');
-    const statusText = document.getElementById('status');
-    const tempoSlider = document.getElementById('tempo-slider');
-    const tempoValueSpan = document.getElementById('tempo-value');
-    const channelList = document.getElementById('channel-list');
-    const songSelect = document.getElementById('song-select');
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
+    const voiceButton = document.getElementById('voiceButton');
+    const tempoButton = document.getElementById('tempoButton');
+    const tempoPopup = document.getElementById('tempoPopup');
+    const tempoSliderPopup = document.getElementById('tempoSliderPopup');
+    const tempoValuePopup = document.getElementById('tempoValuePopup');
+    const instrumentsPopup = document.getElementById('instrumentsPopup');
+    const instrumentSelectContainer = document.getElementById('instrumentSelectContainer');
+    const statusText = document.getElementById('status');
+    // const loadButton = document.getElementById('loadButton'); // Commenté car le bouton est maintenant caché
 
-    // Mettre à jour l'état des boutons
-    function updateButtonState(state) {
-        if (state === 'playing') {
-            playButton.disabled = true;
-            pauseButton.disabled = false;
-            stopButton.disabled = false;
-        } else if (state === 'paused') {
-            playButton.disabled = false;
-            pauseButton.disabled = true;
-            stopButton.disabled = false;
-        } else if (state === 'stopped') {
-            playButton.disabled = false;
-            pauseButton.disabled = true;
-            stopButton.disabled = true;
-        } else if (state === 'loading') {
-            playButton.disabled = true;
-            pauseButton.disabled = true;
-            stopButton.disabled = true;
-        }
+    // Mappage des noms d'instruments lisibles
+    const instrumentNames = {
+      'acoustic_grand_piano': 'Piano acoustique',
+      'electric_piano_1': 'Piano électrique',
+      'church_organ': 'Orgue d\'église',
+      'string_ensemble_1': 'Ensemble de cordes',
+      'brass_section': 'Section de cuivres',
+      'orchestral_harp': 'Harpe orchestrale',
+      'synth_strings_1': 'Synthétiseur de cordes'
+    };
+    
+    /**
+     * Affiche un message de statut.
+     * @param {string} message Le message à afficher.
+     */
+    function setStatus(message) {
+        statusText.textContent = message;
     }
 
-    // Fonction pour charger un fichier MIDI
-    async function loadMidi(url) {
-        if (!url) {
-            statusText.textContent = "Aucun fichier MIDI spécifié.";
-            return;
-        }
-        updateButtonState('loading');
-        statusText.textContent = "Chargement en cours...";
-        
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP: ${response.status}`);
-            }
-            const arrayBuffer = await response.arrayBuffer();
-            midi = new Midi(arrayBuffer);
-            
-            // Re-initialiser le lecteur et les pistes
-            Tone.Transport.stop();
-            Tone.Transport.cancel();
-            midiParts = [];
-            channelList.innerHTML = '';
-            instrumentsAndTracks.clear();
+    /**
+     * Charge une liste d'instruments par défaut pour toutes les pistes.
+     * @param {number} numTracks Le nombre de pistes.
+     */
+    function loadDefaultSynths(numTracks) {
+      synths.forEach(s => s.dispose());
+      synths = [];
 
-            // Grouper les pistes par instrument
-            midi.tracks.forEach((track, index) => {
-                if (track.notes.length > 0) {
-                    const instrumentName = track.instrument.name || `Instrument ${track.instrument.number}`;
-                    if (!instrumentsAndTracks.has(instrumentName)) {
-                        instrumentsAndTracks.set(instrumentName, []);
-                    }
-                    instrumentsAndTracks.get(instrumentName).push(index);
-                }
+      // Crée un synthétiseur par défaut pour chaque piste
+      for (let i = 0; i < numTracks; i++) {
+        // On utilise un PolySynth simple pour la démonstration
+        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        synths.push(synth);
+      }
+    }
+
+    /**
+     * Charge un fichier MIDI depuis une URL.
+     * @param {string} url L'URL du fichier MIDI.
+     */
+    async function loadMidi(url) {
+      if (Tone.Transport.state === "started") {
+        stopMidi();
+      }
+      midiLoaded = false;
+      loadedMidiUrl = url;
+      setStatus("Chargement du cantique...");
+
+      try {
+        currentMidi = await Midi.fromUrl(url);
+        
+        // Charger un synthétiseur par défaut pour chaque piste
+        loadDefaultSynths(currentMidi.tracks.length);
+        
+        // Mettre à jour la liste des instruments
+        updateInstrumentList();
+
+        // Réinitialiser le tempo
+        Tone.Transport.bpm.value = 120;
+        if (tempoSliderPopup) {
+            tempoSliderPopup.value = 120;
+            tempoValuePopup.textContent = 120;
+        }
+        
+        midiLoaded = true;
+        setStatus("Cantique chargé avec succès !");
+
+      } catch (error) {
+        console.error("Erreur de chargement du fichier MIDI:", error);
+        setStatus("Erreur de chargement du fichier MIDI.");
+        midiLoaded = false;
+      }
+    }
+
+    /**
+     * Met à jour les listes de sélection des instruments dans le pop-up.
+     */
+    function updateInstrumentList() {
+      if (!currentMidi) return;
+      
+      instrumentSelectContainer.innerHTML = '';
+      currentMidi.tracks.forEach((track, index) => {
+        // On ne crée une liste de sélection que si la piste n'est pas vide
+        if (track.notes.length > 0) {
+            const div = document.createElement('div');
+            div.className = 'w-full';
+            
+            const label = document.createElement('label');
+            label.className = 'block text-sm font-medium text-gray-700 mb-1';
+            label.textContent = `Piste ${index + 1}:`;
+            
+            const select = document.createElement('select');
+            select.className = 'w-full p-2 border border-gray-300 rounded-md shadow-sm';
+            select.dataset.trackIndex = index;
+
+            instruments.forEach(instrument => {
+              const option = document.createElement('option');
+              option.value = instrument;
+              option.textContent = instrumentNames[instrument] || instrument;
+              select.appendChild(option);
             });
 
-            // Créer les cases à cocher pour les instruments
-            if (instrumentsAndTracks.size === 0) {
-                statusText.textContent = "Le fichier MIDI ne contient aucune note jouable.";
-            } else {
-                instrumentsAndTracks.forEach((trackIndices, instrumentName) => {
-                    const label = document.createElement('label');
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.checked = true; // Tous les instruments sont sélectionnés par défaut
-                    checkbox.dataset.instrumentName = instrumentName;
-                    label.textContent = instrumentName;
-                    label.prepend(checkbox);
-                    channelList.appendChild(label);
-                });
-                statusText.textContent = `Fichier chargé. Prêt à jouer.`;
-            }
-            updateButtonState('stopped');
+            // Écouteur pour changer l'instrument
+            select.addEventListener('change', (e) => {
+              const newInstrument = e.target.value;
+              const trackIndex = e.target.dataset.trackIndex;
+              
+              if (synths[trackIndex]) {
+                synths[trackIndex].dispose();
+              }
+              // Crée le nouveau synthétiseur pour la piste sélectionnée
+              synths[trackIndex] = new Tone.Sampler({
+                urls: getInstrumentUrls(newInstrument)
+              }).toDestination();
+              
+              console.log(`Instrument de la piste ${trackIndex + 1} changé en ${instrumentNames[newInstrument]}`);
+            });
 
-        } catch (e) {
-            statusText.textContent = `Erreur de chargement: ${e.message}`;
-            updateButtonState('stopped');
-            console.error(e);
+            div.appendChild(label);
+            div.appendChild(select);
+            instrumentSelectContainer.appendChild(div);
         }
+      });
     }
 
-    // Fonction pour jouer le MIDI
+    /**
+     * Renvoie les URLs des échantillons audio pour un instrument donné.
+     * Pour cet exemple, on se contente d'une structure vide pour Tone.Sampler
+     * pour simuler un changement d'instrument.
+     */
+    function getInstrumentUrls(instrumentName) {
+      return {};
+    }
+
+    /**
+     * Lit la séquence MIDI.
+     */
     function playMidi() {
-      if (!midi) {
-        statusText.textContent = "Aucun fichier MIDI chargé.";
+      if (!midiLoaded) {
+        setStatus("Veuillez charger un cantique d'abord.");
         return;
       }
+
+      // Arrêter toute lecture précédente
+      Tone.Transport.cancel();
       
-      if (Tone.Transport.state === "paused") {
-          Tone.Transport.start();
-          updateButtonState('playing');
-          statusText.textContent = 'Lecture en cours...';
+      // Boucle sur chaque piste MIDI
+      currentMidi.tracks.forEach((track, trackIndex) => {
+        const synth = synths[trackIndex];
+        
+        if (!synth) {
+          console.warn(`Synthétiseur non trouvé pour la piste ${trackIndex}.`);
           return;
-      }
-      
-      // Nettoyer les parties précédentes
-      midiParts.forEach(part => part.dispose());
-      midiParts = [];
-      Tone.Transport.stop();
-      Tone.Transport.cancel();
-      
-      const selectedInstruments = Array.from(channelList.querySelectorAll('input[type="checkbox"]'))
-                                         .filter(cb => cb.checked)
-                                         .map(cb => cb.dataset.instrumentName);
-
-      if (selectedInstruments.length === 0) {
-        statusText.textContent = "Veuillez sélectionner au moins un instrument.";
-        return;
-      }
-
-      // Collecter toutes les pistes des instruments sélectionnés
-      const selectedTracks = [];
-      selectedInstruments.forEach(instrumentName => {
-        const trackIndices = instrumentsAndTracks.get(instrumentName);
-        if (trackIndices) {
-          trackIndices.forEach(index => {
-            selectedTracks.push(midi.tracks[index]);
-          });
         }
-      });
-      
-      // Créer de nouvelles parties pour les pistes sélectionnées
-      selectedTracks.forEach((track) => {
-          const part = new Tone.Part((time, value) => {
-              sampler.triggerAttackRelease(
-                  value.name,
-                  value.duration,
-                  time,
-                  value.velocity
-              );
-          }, track.notes).start(0);
-          midiParts.push(part);
-      });
-      
-      Tone.Transport.bpm.value = tempoSlider.value;
-      Tone.Transport.start();
-      updateButtonState('playing');
-      statusText.textContent = 'Lecture en cours...';
 
-      // Mettre à jour le statut une fois la lecture terminée
-      Tone.Transport.on('stop', () => {
-        statusText.textContent = 'Lecture terminée.';
-        updateButtonState('stopped');
-      });
-    }
-
-    // Fonction pour mettre en pause la lecture
-    function pauseMidi() {
-      Tone.Transport.pause();
-      updateButtonState('paused');
-      statusText.textContent = 'En pause.';
-    }
-
-    // Fonction pour arrêter la lecture
-    function stopMidi() {
-      Tone.Transport.stop();
-      Tone.Transport.cancel();
-      updateButtonState('stopped');
-      statusText.textContent = 'Arrêté. Prêt à rejouer.';
-    }
-
-    // Remplir le menu déroulant avec les cantiques
-    function populateSongList() {
-        cantiques.forEach((cantique, index) => {
-            const option = document.createElement('option');
-            option.value = index;
-            option.textContent = `${cantique.numero || 'N/A'} - ${cantique.titre}`;
-            songSelect.appendChild(option);
+        // Crée l'événement Tone.js pour chaque note de la piste
+        track.notes.forEach(note => {
+          Tone.Transport.scheduleOnce(() => {
+            // Joue la note sur le synthétiseur correspondant
+            synth.triggerAttackRelease(note.name, note.duration, Tone.now(), note.velocity);
+          }, note.time);
         });
+      });
+
+      // Démarrer le transport de Tone.js
+      Tone.Transport.start();
+      setStatus("Lecture en cours...");
     }
 
-    // Charger le cantique sélectionné
+    /**
+     * Met en pause la lecture MIDI.
+     */
+    function pauseMidi() {
+      if (Tone.Transport.state === "started") {
+        Tone.Transport.pause();
+        setStatus("Lecture en pause.");
+      }
+    }
+
+    /**
+     * Arrête complètement la lecture MIDI.
+     */
+    function stopMidi() {
+      if (Tone.Transport.state !== "stopped") {
+        Tone.Transport.stop();
+        Tone.Transport.cancel(); // Annule tous les événements
+        setStatus("Lecture arrêtée.");
+      }
+    }
+
+    /**
+     * Charge le cantique sélectionné dans la liste déroulante.
+     */
     function loadSelectedSong() {
-        const index = songSelect.selectedIndex;
-        if (index >= 0) {
-            currentSongIndex = index;
-            const songUrl = `downloads/${cantiques[currentSongIndex].instruMidi.replaceAll('CV/', '')}`;
-            stopMidi();
-            loadMidi(songUrl);
-        }
-    }
-
-    // Gérer le bouton "Suivant"
-    function nextSong() {
-        currentSongIndex = (currentSongIndex + 1) % cantiques.length;
-        songSelect.value = currentSongIndex;
-        loadSelectedSong();
-    }
-
-    // Gérer le bouton "Précédent"
-    function prevSong() {
-        currentSongIndex = (currentSongIndex - 1 + cantiques.length) % cantiques.length;
-        songSelect.value = currentSongIndex;
-        loadSelectedSong();
+      stopMidi();
+      const selectedIndex = songSelect.selectedIndex;
+      currentSongIndex = selectedIndex;
+      const song = cantiques[selectedIndex];
+      if (song) {
+        loadMidi('downloads/'+song.instruMidi);
+      }
     }
     
-    // Écouteur d'événement pour le curseur de tempo
-    tempoSlider.addEventListener('input', () => {
-        Tone.Transport.bpm.value = tempoSlider.value;
-        tempoValueSpan.textContent = tempoSlider.value;
+    /**
+     * Passe au cantique précédent.
+     */
+    function prevSong() {
+      currentSongIndex = (currentSongIndex - 1 + cantiques.length) % cantiques.length;
+      songSelect.value = currentSongIndex;
+      loadSelectedSong();
+    }
+    
+    /**
+     * Passe au cantique suivant.
+     */
+    function nextSong() {
+      currentSongIndex = (currentSongIndex + 1) % cantiques.length;
+      songSelect.value = currentSongIndex;
+      loadSelectedSong();
+    }
+
+    /**
+     * Affiche ou masque le pop-up du tempo.
+     */
+    function toggleTempoPopup() {
+      tempoPopup.style.display = tempoPopup.style.display === 'flex' ? 'none' : 'flex';
+      if (tempoPopup.style.display === 'flex') {
+        tempoSliderPopup.value = Tone.Transport.bpm.value;
+        tempoValuePopup.textContent = Tone.Transport.bpm.value;
+      }
+    }
+    
+    /**
+     * Affiche ou masque le pop-up des instruments.
+     */
+    function toggleInstrumentsPopup() {
+      if (currentMidi && midiLoaded) {
+        instrumentsPopup.style.display = instrumentsPopup.style.display === 'flex' ? 'none' : 'flex';
+      } else {
+        // Optionnel : afficher un message si aucun cantique n'est chargé
+        setStatus("Veuillez d'abord charger un cantique pour sélectionner les instruments.");
+      }
+    }
+
+    // Écouteur pour le slider de tempo du pop-up
+    tempoSliderPopup.addEventListener('input', () => {
+      Tone.Transport.bpm.value = tempoSliderPopup.value;
+      tempoValuePopup.textContent = tempoSliderPopup.value;
     });
 
-    // Ajouter les écouteurs d'événements pour les boutons
-    loadButton.addEventListener('click', () => {
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = '.mid, .midi';
-        fileInput.onchange = (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const fileURL = URL.createObjectURL(file);
-                loadMidi(fileURL);
-            }
-        };
-        fileInput.click();
-    });
+    // Gestion de l'état du bouton Play/Pause
+    function handlePlayPause() {
+      if (Tone.Transport.state === "started") {
+        pauseMidi();
+        playPauseIcon.classList.remove('fa-pause');
+        playPauseIcon.classList.add('fa-play');
+      } else {
+        // Le bouton joue aussi si c'est la première fois ou si c'est après un stop
+        if (Tone.Transport.state === "stopped") {
+           if (!midiLoaded) {
+              loadSelectedSong();
+           }
+        }
+        playMidi();
+        playPauseIcon.classList.remove('fa-play');
+        playPauseIcon.classList.add('fa-pause');
+      }
+    }
 
-    playButton.addEventListener('click', playMidi);
-    pauseButton.addEventListener('click', pauseMidi);
-    stopButton.addEventListener('click', stopMidi);
-    songSelect.addEventListener('change', loadSelectedSong);
+    // Écouteurs d'événements pour les boutons de la barre
+    playPauseButton.addEventListener('click', handlePlayPause);
+    stopButton.addEventListener('click', () => {
+      stopMidi();
+      playPauseIcon.classList.remove('fa-pause');
+      playPauseIcon.classList.add('fa-play');
+    });
     prevButton.addEventListener('click', prevSong);
     nextButton.addEventListener('click', nextSong);
+    voiceButton.addEventListener('click', toggleInstrumentsPopup);
+    tempoButton.addEventListener('click', toggleTempoPopup);
+    songSelect.addEventListener('change', loadSelectedSong);
 
-    // Initialisation du lecteur
-    window.onload = function() {
-        populateSongList();
-        // Charger le premier cantique par défaut
-        if (cantiques.length > 0) {
-            loadSelectedSong();
-        }
-    };
+    // Fonction d'initialisation
+    function initializePlayer() {
+      // Peuple la liste de sélection des cantiques
+      cantiques.forEach((song, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = song.titre;
+        songSelect.appendChild(option);
+      });
+      // Charge le premier cantique par défaut au démarrage
+      loadSelectedSong();
+    }
+    
+    window.onload = initializePlayer;
   </script>
 </body>
 </html>
