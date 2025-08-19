@@ -175,7 +175,7 @@
     <p id="status">En attente...</p>
 
     <div class="channels-container">
-      <h2>Pistes MIDI</h2>
+      <h2>Pistes MIDI par Instrument</h2>
       <div id="channel-list">
         </div>
     </div>
@@ -954,13 +954,16 @@
             "instruMidi": "CV/CV_311-polyinstru-priere_de_lenfant_a_son_coucher.mid"
         }
     ];
- // Variables globales
+    // Variables globales
     const sampler = new Tone.PolySynth(Tone.Synth).toDestination();
     let midi;
     let playing = false;
     let midiPlayer = null;
     let midiParts = [];
     let currentSongIndex = 0;
+    
+    // Ajout d'une map pour stocker les instruments et les pistes associées
+    let instrumentsAndTracks = new Map();
 
     // Éléments du DOM
     const playButton = document.getElementById('playButton');
@@ -1013,59 +1016,38 @@
             const arrayBuffer = await response.arrayBuffer();
             midi = new Midi(arrayBuffer);
             
-            // Re-initialiser le lecteur
+            // Re-initialiser le lecteur et les pistes
             Tone.Transport.stop();
             Tone.Transport.cancel();
             midiParts = [];
             channelList.innerHTML = '';
+            instrumentsAndTracks.clear();
 
-            // Filtrer et trier les pistes utiles
-            const usefulTracks = [];
-            
-            // Utiliser une structure pour suivre les pistes par instrument et channel
-            const tracksByInstrument = new Map();
-            
+            // Grouper les pistes par instrument
             midi.tracks.forEach((track, index) => {
-                // On inclut seulement les pistes qui ont des notes
                 if (track.notes.length > 0) {
-                    const instrumentNumber = track.instrument.number;
-                    const channelNumber = track.channel;
-
-                    // Créer un identifiant unique basé sur l'instrument et le canal
-                    const id = `${instrumentNumber}-${channelNumber}`;
-                    
-                    if (!tracksByInstrument.has(id)) {
-                        // Si c'est la première fois que nous voyons cet instrument sur ce canal, on l'ajoute.
-                        // On peut aussi fusionner les notes si un instrument utilise plusieurs pistes
-                        // mais pour la sélection simple, il est préférable de les lister séparément.
-                        // On va garder la piste la plus significative (avec le plus de notes par exemple)
-                        tracksByInstrument.set(id, {
-                             track: track,
-                             originalIndex: index,
-                             name: track.name || `Piste ${index + 1}`
-                        });
+                    const instrumentName = track.instrument.name || `Instrument ${track.instrument.number}`;
+                    if (!instrumentsAndTracks.has(instrumentName)) {
+                        instrumentsAndTracks.set(instrumentName, []);
                     }
+                    instrumentsAndTracks.get(instrumentName).push(index);
                 }
             });
 
-            // Créer les cases à cocher pour les pistes non vides
-            Array.from(tracksByInstrument.values()).forEach((item) => {
-                const track = item.track;
-                const index = item.originalIndex;
-                const trackName = track.name || `Piste ${index + 1}`;
-                const label = document.createElement('label');
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.checked = true; // Toutes les pistes sont sélectionnées par défaut
-                checkbox.dataset.trackIndex = index;
-                label.textContent = trackName;
-                label.prepend(checkbox);
-                channelList.appendChild(label);
-            });
-
-            if (tracksByInstrument.size === 0) {
+            // Créer les cases à cocher pour les instruments
+            if (instrumentsAndTracks.size === 0) {
                 statusText.textContent = "Le fichier MIDI ne contient aucune note jouable.";
             } else {
+                instrumentsAndTracks.forEach((trackIndices, instrumentName) => {
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = true; // Tous les instruments sont sélectionnés par défaut
+                    checkbox.dataset.instrumentName = instrumentName;
+                    label.textContent = instrumentName;
+                    label.prepend(checkbox);
+                    channelList.appendChild(label);
+                });
                 statusText.textContent = `Fichier chargé. Prêt à jouer.`;
             }
             updateButtonState('stopped');
@@ -1097,15 +1079,26 @@
       Tone.Transport.stop();
       Tone.Transport.cancel();
       
-      const selectedTracks = Array.from(channelList.querySelectorAll('input[type="checkbox"]'))
-                                   .filter(cb => cb.checked)
-                                   .map(cb => midi.tracks[cb.dataset.trackIndex]);
+      const selectedInstruments = Array.from(channelList.querySelectorAll('input[type="checkbox"]'))
+                                         .filter(cb => cb.checked)
+                                         .map(cb => cb.dataset.instrumentName);
 
-      if (selectedTracks.length === 0) {
-        statusText.textContent = "Veuillez sélectionner au moins une piste.";
+      if (selectedInstruments.length === 0) {
+        statusText.textContent = "Veuillez sélectionner au moins un instrument.";
         return;
       }
 
+      // Collecter toutes les pistes des instruments sélectionnés
+      const selectedTracks = [];
+      selectedInstruments.forEach(instrumentName => {
+        const trackIndices = instrumentsAndTracks.get(instrumentName);
+        if (trackIndices) {
+          trackIndices.forEach(index => {
+            selectedTracks.push(midi.tracks[index]);
+          });
+        }
+      });
+      
       // Créer de nouvelles parties pour les pistes sélectionnées
       selectedTracks.forEach((track) => {
           const part = new Tone.Part((time, value) => {
