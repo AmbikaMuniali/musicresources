@@ -919,9 +919,7 @@
     ];
 
     // Liste des instruments disponibles
-    const instruments = [
-      'acoustic_grand_piano', 'electric_piano_1', 'church_organ', 'string_ensemble_1', 'brass_section', 'orchestral_harp', 'synth_strings_1'
-    ];
+    
 
     let currentSongIndex = 0;
     let currentMidi;
@@ -1026,6 +1024,8 @@
       if (!currentMidi) return;
       
       instrumentSelectContainer.innerHTML = '';
+      let usedInstrument = [];
+
       currentMidi.tracks.forEach((track, index) => {
         // On ne crée une liste de sélection que si la piste n'est pas vide
         if (track.notes.length > 0) {
@@ -1034,50 +1034,44 @@
             
             const label = document.createElement('label');
             label.className = 'block text-sm font-medium text-gray-700 mb-1';
-            label.textContent = `Piste ${index + 1}:`;
+
             
-            const select = document.createElement('select');
-            select.className = 'w-full p-2 border border-gray-300 rounded-md shadow-sm';
-            select.dataset.trackIndex = index;
+            
+            const input = document.createElement('input');
+            // input.className = 'w-full p-2 border border-gray-300 rounded-md shadow-sm';
+            input.dataset.trackIndex = index;
 
-            instruments.forEach(instrument => {
-              const option = document.createElement('option');
-              option.value = instrument;
-              option.textContent = instrumentNames[instrument] || instrument;
-              select.appendChild(option);
-            });
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = true; // Tous les instruments sont sélectionnés par défaut
 
-            // Écouteur pour changer l'instrument
-            select.addEventListener('change', (e) => {
-              const newInstrument = e.target.value;
-              const trackIndex = e.target.dataset.trackIndex;
-              
-              if (synths[trackIndex]) {
-                synths[trackIndex].dispose();
-              }
-              // Crée le nouveau synthétiseur pour la piste sélectionnée
-              synths[trackIndex] = new Tone.Sampler({
-                urls: getInstrumentUrls(newInstrument)
-              }).toDestination();
-              
-              console.log(`Instrument de la piste ${trackIndex + 1} changé en ${instrumentNames[newInstrument]}`);
-            });
+                    const trackName = track.instrument.name;
+                    label.textContent = trackName;
+                    checkbox.dataset.instrumentName = trackName;
+                    checkbox.dataset.trackIndex = index;
+                    label.textContent = trackName;
+                    label.prepend(checkbox);
 
+            
+
+           
+            console.log(trackName)
+            if (usedInstrument.indexOf(trackName)<0) {
             div.appendChild(label);
-            div.appendChild(select);
-            instrumentSelectContainer.appendChild(div);
+            instrumentSelectContainer.appendChild(div); 
+            usedInstrument.push(trackName);}
         }
       });
     }
 
-    /**
-     * Renvoie les URLs des échantillons audio pour un instrument donné.
-     * Pour cet exemple, on se contente d'une structure vide pour Tone.Sampler
-     * pour simuler un changement d'instrument.
-     */
-    function getInstrumentUrls(instrumentName) {
-      return {};
+    function mutedIntrument () {
+        const instruments = Array.from(document.querySelectorAll('input[type="checkbox"]'))
+                                         .filter(cb => !cb.checked)
+                                         .map(cb => cb.dataset.instrumentName);
+        return instruments;
     }
+
+  
 
     /**
      * Lit la séquence MIDI.
@@ -1087,13 +1081,22 @@
         setStatus("Veuillez charger un cantique d'abord.");
         return;
       }
+      console.log(mutedIntrument())
 
       // Arrêter toute lecture précédente
       Tone.Transport.cancel();
       
       // Boucle sur chaque piste MIDI
       currentMidi.tracks.forEach((track, trackIndex) => {
+
+        let instrument = track.instrument.name;
+
+        muted = mutedIntrument();
+
+        if(muted.indexOf(instrument)>-1) return ;
+
         const synth = synths[trackIndex];
+
         
         if (!synth) {
           console.warn(`Synthétiseur non trouvé pour la piste ${trackIndex}.`);
