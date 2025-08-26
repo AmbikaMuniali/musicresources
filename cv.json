@@ -1,0 +1,771 @@
+[
+    
+    {
+        "numero": "5",
+        "titre": "Jésus, Jésus, seul nom",
+        "pdfA4": "CV_005-Jesus_Jesus_A4-avecMusique.pdf",
+        "instruMidi": "CV_005-polyinstru-Jesus_Jesus.mid"
+    },
+    {
+        "numero": "6",
+        "titre": "À Dieu soit la gloire",
+        "pdfA4": "CV_006-A_Dieu_soit_la_gloire_A4-avecMusique.pdf",
+        "instruMidi": "CV_006-polyinstru-A_Dieu_soit_la_gloire.mid"
+    },
+    {
+        "numero": "8",
+        "titre": "Le nom de Jésus est si doux",
+        "pdfA4": "CV_008-Le_nom_de_Jesus_A4-avecMusique.pdf",
+        "instruMidi": "CV_008-polyinstru-Le_nom_de_Jesus.mid"
+    },
+    {
+        "numero": "11",
+        "titre": "Adorable mystère",
+        "pdfA4": "CV_011-Adorable_mystere_A4-avecMusique.pdf",
+        "instruMidi": "CV_011-polyinstru-Adorable_mystere.mid"
+    },
+    {
+        "numero": "17",
+        "titre": "À Celui qui nous a lavés",
+        "pdfA4": "CV_017-A_celui_qui_nous_a_laves_A4-avecMusique.pdf",
+        "instruMidi": "CV_017-polyinstru-A_celui_qui_nous_a_laves.mid"
+    },
+    {
+        "numero": "18",
+        "titre": "Vers toi monte notre hommage",
+        "pdfA4": "CV_018-Vers_toi_monte_notre_hommage_A4-avecMusique.pdf",
+        "instruMidi": "CV_018-polyinstru-Vers_toi_monte_notre_hommage.mid"
+    },
+    {
+        "numero": "20",
+        "titre": "Oh! quel bonheur de le connaitre",
+        "pdfA4": "CV_020-Oh_quel_bonheur_de_le_connaitre_A4-avecMusique.pdf",
+        "instruMidi": "CV_020-polyinstru-Oh_quel_bonheur_de_le_connaitre.mid"
+    },
+    {
+        "numero": "22",
+        "titre": "Je l'ai trouvé le bonheur ineffable",
+        "pdfA4": "CV_022-Je_l_ai_trouve_le_bonheur_ineffable_A4-avecMusique.pdf",
+        "instruMidi": "CV_022-polyinstru-Je_l_ai_trouve_le_bonheur_ineffable.mid"
+    },
+    {
+        "numero": "24",
+        "titre": "Par tous les saints glorifié",
+        "pdfA4": "CV_024-Par_tous_les_saints_glorifie_A4-avecMusique.pdf",
+        "instruMidi": "CV_024-polyinstru-Par_tous_les_saints_glorifie.mid"
+    },
+    {
+        "numero": "26",
+        "titre": "Les rayons de l'amour divin",
+        "pdfA4": "CV_026-Les_rayons_de_l_amour_divin_A4-avecMusique.pdf",
+        "instruMidi": "CV_026-polyinstru-Les_rayons_de_l_amour_divin.mid"
+    },
+    {
+        "numero": "28",
+        "titre": "Oh! que toute la terre entonne",
+        "pdfA4": "CV_028-Oh_que_toute_la_terre_entonne_A4-avecMusique.pdf",
+        "instruMidi": "CV_028-polyinstru-Oh_que_toute_la_terre_entonne.mid"
+    },
+    {
+        "numero": "29",
+        "titre": "Rédempteur adorable",
+        "pdfA4": "CV_029-Redempteur_adorable_A4-avecMusique.pdf",
+        "instruMidi": "CV_029-polyinstru-Redempteur_adorable.mid"
+    },
+    {
+        "numero": "30",
+        "titre": "Ma richesse et ma gloire",
+        "pdfA4": "CV_030-Ma_richesse_ma_gloire_A4-avecMusique.pdf",
+        "instruMidi": "CV_030-polyinstru-Ma_richesse_ma_gloire.mid"
+    },
+    {
+        "numero": "34",
+        "titre": "Ah! Si ton sang, si ta mort, si ta vie",
+        "pdfA4": "CV_034-Ah_si_ton_sang_A4-avecMusique.pdf",
+        "instruMidi": "CV_034-polyinstru-Ah_si_ton_sang.mid"
+    },
+    {
+        "numero": "41",
+        "titre": "Roi couvert de blessures",
+        "pdfA4": "CV_041-Roi_couvert_de_blessures_A4-avecMusique.pdf",
+        "instruMidi": "CV_041-polyinstru-Roi_couvert_de_blessures.mid"
+    },
+    {
+        "numero": "42",
+        "titre": "Agneau de Dieu, Messager de la grâce",
+        "pdfA4": "CV_042-Agneau_de_Dieu_A4-avecMusique.pdf",
+        "instruMidi": "CV_042-polyinstru-Agneau_de_Dieu.mid"
+    },
+    {
+        "numero": "43",
+        "titre": "Jésus-Christ est ma sagesse",
+        "pdfA4": "CV_043-Jesus_Christ_est_ma_sagesse_A4-avecMusique.pdf",
+        "instruMidi": "CV_043-polyinstru-Jesus_Christ_est_ma_sagesse.mid"
+    },
+    {
+        "numero": null,
+        "titre": "Venez contempler au calvaire",
+        "pdfA4": "CV_045a-Venez_contempler_au_Calvaire_A4-avecMusique.pdf",
+        "instruMidi": "CV_045a-polyinstru-Venez_contempler_au_Calvaire.mid"
+    },
+    {
+        "numero": "46",
+        "titre": "Viens mon âme, et contemple",
+        "pdfA4": "CV_046-Viens_mon_ame_A4-avecMusique.pdf",
+        "instruMidi": "CV_046-polyinstru-Viens_mon_ame.mid"
+    },
+    {
+        "numero": "47",
+        "titre": "C'est toi Jésus, Pain de vie",
+        "pdfA4": "CV_047-C_est_toi_Jesus_A4-avecMusique.pdf",
+        "instruMidi": "CV_047-polyinstru-C_est_toi_Jesus.mid"
+    },
+    {
+        "numero": "57",
+        "titre": "Viens à la croix",
+        "pdfA4": "CV_057-Viens_a_la_croix_A4-avecMusique.pdf",
+        "instruMidi": "CV_057-polyinstru-Viens_a_la_croix.mid"
+    },
+    {
+        "numero": "70",
+        "titre": "Coeurs fatigués et chargés",
+        "pdfA4": "CV_070-Coeurs_fatigues_A4-avecMusique.pdf",
+        "instruMidi": "CV_070-polyinstru-Coeurs_fatigues.mid"
+    },
+    {
+        "numero": "71",
+        "titre": "Reviens!",
+        "pdfA4": "CV_071-Reviens_A4-avecMusique.pdf",
+        "instruMidi": "CV_071-polyinstru-Reviens.mid"
+    },
+    {
+        "numero": "74",
+        "titre": "Arrête, ô pécheur, arrête",
+        "pdfA4": "CV_074-Arrete_o_pecheur_arrete_A4-avecMusique.pdf",
+        "instruMidi": "CV_074-polyinstru-Arrete_o_pecheur_arrete.mid"
+    },
+    {
+        "numero": "75",
+        "titre": "Comme un phare sur la plage",
+        "pdfA4": "CV_075-Comme_un_phare_sur_la_plage_A4-avecMusique.pdf",
+        "instruMidi": "CV_075-polyinstru-Comme_un_phare_sur_la_plage.mid"
+    },
+    {
+        "numero": "77",
+        "titre": "Reviens à ton Père",
+        "pdfA4": "CV_077-Reviens_a_ton_Pere_A4-avecMusique.pdf",
+        "instruMidi": "CV_077-polyinstru-Reviens_a_ton_Pere.mid"
+    },
+    {
+        "numero": "79",
+        "titre": "Il est un roc séculaire",
+        "pdfA4": "CV_079-Il_est_un_roc_seculaire_A4-avecMusique.pdf",
+        "instruMidi": "CV_079-polyinstru-Il_est_un_roc_seculaire.mid"
+    },
+    {
+        "numero": "84",
+        "titre": "Nous voguons vers un beau rivage",
+        "pdfA4": "CV_084-Nous_voguons_vers_un_beau_rivage_A4-avecMusique.pdf",
+        "instruMidi": "CV_084-polyinstru-Nous_voguons_vers_un_beau_rivage.mid"
+    },
+    {
+        "numero": "86",
+        "titre": "Venez au Sauveur qui vous aime",
+        "pdfA4": "CV_086-Venez_au_Sauveur_qui_vous_aime_A4-avecMusique.pdf",
+        "instruMidi": "CV_086-polyinstru-Venez_au_Sauveur_qui_vous_aime.mid"
+    },
+    {
+        "numero": "87",
+        "titre": "C'est encore temps!",
+        "pdfA4": "CV_087-Cest_encore_temps_A4-avecMusique.pdf",
+        "instruMidi": "CV_087-polyinstru-Cest_encore_temps.mid"
+    },
+    {
+        "numero": "90",
+        "titre": "Viens! âme perdue",
+        "pdfA4": "CV_090-Viens_ame_perdue_A4-avecMusique.pdf",
+        "instruMidi": "CV_090-polyinstru-Viens_ame_perdue.mid"
+    },
+    {
+        "numero": "94",
+        "titre": "Par ce chemin solitaire",
+        "pdfA4": "CV_094-Par_ce_chemin_solitaire_A4-avecMusique.pdf",
+        "instruMidi": "CV_094-polyinstru-Par_ce_chemin_solitaire.mid"
+    },
+    {
+        "numero": "102",
+        "titre": "Viens au Père",
+        "pdfA4": "CV_102-Viens_au_Pere_A4-avecMusique.pdf",
+        "instruMidi": "CV_102-polyinstru-Viens_au_Pere.mid"
+    },
+    {
+        "numero": "104",
+        "titre": "Bientôt le Seigneur va venir",
+        "pdfA4": "CV_104-Bientot_le_Seigneur_va_venir_A4-avecMusique.pdf",
+        "instruMidi": "CV_104-polyinstru-Bientot_le_Seigneur_va_venir.mid"
+    },
+    {
+        "numero": "105",
+        "titre": "Pécheur, je voudrais te guérir",
+        "pdfA4": "CV_105-Pecheur_je_voudrais_te_guerir_A4-avecMusique.pdf",
+        "instruMidi": "CV_105-polyinstru-Pecheur_je_voudrais_te_guerir.mid"
+    },
+    {
+        "numero": "107",
+        "titre": "Une bonne nouvelle",
+        "pdfA4": "CV_107-Une_bonne_nouvelle_A4-avecMusique.pdf",
+        "instruMidi": "CV_107-polyinstru-Une_bonne_nouvelle.mid"
+    },
+    {
+        "numero": "108",
+        "titre": "Dis tout à Jésus",
+        "pdfA4": "CV_108-Dis_tout_a_Jesus_A4-avecMusique.pdf",
+        "instruMidi": "CV_108-polyinstru-Dis_tout_a_Jesus.mid"
+    },
+    {
+        "numero": "111",
+        "titre": "Publiez bien haut",
+        "pdfA4": "CV_111-Publiez_bien_haut_A4-avecMusique.pdf",
+        "instruMidi": "CV_111-polyinstru-Publiez_bien_haut.mid"
+    },
+    {
+        "numero": "112",
+        "titre": "Jesus frappe à votre porte, ouvrez aujourd'hui",
+        "pdfA4": "CV_112-Jesus_frappe_a_votre_porte_ouvrez_aujourd_hui_A4-avecMusique.pdf",
+        "instruMidi": "CV_112-polyinstru-Jesus_frappe_a_votre_porte_ouvrez_aujourd_hui.mid"
+    },
+    {
+        "numero": "115",
+        "titre": "Où cherchez-vous le bonheur?",
+        "pdfA4": "CV_115-Ou_cherchez_vous_le_bonheur_A4-avecMusique.pdf",
+        "instruMidi": "CV_115-polyinstru-Ou_cherchez_vous_le_bonheur.mid"
+    },
+    {
+        "numero": "120",
+        "titre": "Blanc, plus blanc que neige",
+        "pdfA4": "CV_120-Jesus_par_ton_sang_precieux_A4-avecMusique.pdf",
+        "instruMidi": "CV_120-polyinstru-Jesus_par_ton_sang_precieux.mid"
+    },
+    {
+        "numero": "122",
+        "titre": "Source féconde",
+        "pdfA4": "CV_122-Source_feconde_A4-avecMusique.pdf",
+        "instruMidi": "CV_122-polyinstru-Source_feconde.mid"
+    },
+    {
+        "numero": "126",
+        "titre": "Roc séculaire, frappé pour moi (cf. CJ 15)",
+        "pdfA4": "CV_126-Roc_seculaire_A4-avecMusique.pdf",
+        "instruMidi": "CV_126-polyinstru-Roc_seculaire.mid"
+    },
+    {
+        "numero": "127",
+        "titre": "Joie au ciel, le prodigue est de retour",
+        "pdfA4": "CV_127-Joie_au_ciel_A4-avecMusique.pdf",
+        "instruMidi": "CV_127-polyinstru-Joie_au_ciel.mid"
+    },
+    {
+        "numero": "128",
+        "titre": "Seigneur, ta grâce m'appelle",
+        "pdfA4": "CV_128-Seigneur_ta_grace_m_appelle_A4-avecMusique.pdf",
+        "instruMidi": "CV_128-polyinstru-Seigneur_ta_grace_m_appelle.mid"
+    },
+    {
+        "numero": "131",
+        "titre": "Miséricord insondable",
+        "pdfA4": "CV_131-Misericorde_insondable_A4-avecMusique.pdf",
+        "instruMidi": "CV_131-polyinstru-Misericorde_insondable.mid"
+    },
+    {
+        "numero": "132",
+        "titre": "Torrents d'amour et de grâce",
+        "pdfA4": "CV_132-Torrents_d_amour_A4-avecMusique.pdf",
+        "instruMidi": "CV_132-polyinstru-Torrents_d_amour.mid"
+    },
+    {
+        "numero": "135",
+        "titre": "Veux-tu briser du péché le pouvoir",
+        "pdfA4": "CV_135-Veux_tu_briser_A4-avecMusique.pdf",
+        "instruMidi": "CV_135-polyinstru-Veux_tu_briser.mid"
+    },
+    {
+        "numero": "143",
+        "titre": "Fraîches rosées",
+        "pdfA4": "CV_143-Comme_une_terre_alteree_A4-avecMusique.pdf",
+        "instruMidi": "CV_143-polyinstru-Comme_une_terre_alteree.mid"
+    },
+    {
+        "numero": null,
+        "titre": "Jésus, ta sainte présence",
+        "pdfA4": "CV_147a-Jesus_ta_sainte_presence_A4-avecMusique.pdf",
+        "instruMidi": "CV_147a-polyinstru-Jesus_ta_sainte_presence.mid"
+    },
+    {
+        "numero": "148",
+        "titre": "Jésus est au milieu de nous",
+        "pdfA4": "CV_148-Jesus_est_au_milieu_de_nous_A4-avecMusique.pdf",
+        "instruMidi": "CV_148-polyinstru-Jesus_est_au_milieu_de_nous.mid"
+    },
+    {
+        "numero": null,
+        "titre": "Toi qui disposes",
+        "pdfA4": "CV_149a-Toi_qui_disposes_A4-avecMusique.pdf",
+        "instruMidi": "CV_149a-polyinstru-Toi_qui_disposes.mid"
+    },
+    {
+        "numero": "161",
+        "titre": "Écoutez l'appel du Berger",
+        "pdfA4": "CV_161-Ecoutez_l_appel_du_Berger_A4-avecMusique.pdf",
+        "instruMidi": "CV_161-polyinstru-Ecoutez_l_appel_du_Berger.mid"
+    },
+    {
+        "numero": "162",
+        "titre": "Ah! que je ne sois pas",
+        "pdfA4": "CV_162-Ah_que_je_ne_sois_pas_A4-avecMusique.pdf",
+        "instruMidi": "CV_162-polyinstru-Ah_que_je_ne_sois_pas.mid"
+    },
+    {
+        "numero": "166",
+        "titre": "Qu'il fait bon à ton service",
+        "pdfA4": "CV_166-Qu_il_fait_bon_a_ton_service_A4-avecMusique.pdf",
+        "instruMidi": "CV_166-polyinstru-Qu_il_fait_bon_a_ton_service.mid"
+    },
+    {
+        "numero": "167",
+        "titre": "C'est mon joyeux service",
+        "pdfA4": "CV_167-C_est_mon_joyeux_service_A4-avecMusique.pdf",
+        "instruMidi": "CV_167-polyinstru-C_est_mon_joyeux_service.mid"
+    },
+    {
+        "numero": null,
+        "titre": "Entre tes mains j'abandonne (original anglais)",
+        "pdfA4": "CV_172a-Entre_tes_mains_j_abandonne_A4-avecMusique.pdf",
+        "instruMidi": "CV_172a-polyinstru-Entre_tes_mains_j_abandonne.mid"
+    },
+    {
+        "numero": "174",
+        "titre": "Seul refuge de mon âme",
+        "pdfA4": "CV_174-Seul_refuge_de_mon_ame_A4-avecMusique.pdf",
+        "instruMidi": "CV_174-polyinstru-Seul_refuge_de_mon_ame.mid"
+    },
+    {
+        "numero": "175",
+        "titre": "L'amour de Jésus Christ nous presse",
+        "pdfA4": "CV_175-L_amour_de_Jesus-Christ_nous_presse_A4-avecMusique.pdf",
+        "instruMidi": "CV_175-polyinstru-L_amour_de_Jesus-Christ_nous_presse.mid"
+    },
+    {
+        "numero": "180",
+        "titre": "La voix du Seigneur m'appelle",
+        "pdfA4": "CV_180-La_voix_du_Seigneur_m_appelle_A4-avecMusique.pdf",
+        "instruMidi": "CV_180-polyinstru-La_voix_du_Seigneur_m_appelle.mid"
+    },
+    {
+        "numero": "184",
+        "titre": "Viens, mon âme te réclame",
+        "pdfA4": "CV_184-Viens_mon_ame_te_reclame_A4-avecMusique.pdf",
+        "instruMidi": "CV_184-polyinstru-Viens_mon_ame_te_reclame.mid"
+    },
+    {
+        "numero": "187",
+        "titre": "C'est un rempart que notre Dieu",
+        "pdfA4": "CV_187-C_est_un_rempart_A4-avecMusique.pdf",
+        "instruMidi": "CV_187-polyinstru-C_est_un_rempart.mid"
+    },
+    {
+        "numero": "188",
+        "titre": "Plus que vainqueur",
+        "pdfA4": "CV_188-Plus_que_vainqueurs_A4-avecMusique.pdf",
+        "instruMidi": "CV_188-polyinstru-Plus_que_vainqueurs.mid"
+    },
+    {
+        "numero": "191",
+        "titre": "Jusqu'à ta venue",
+        "pdfA4": "CV_191-Jusqu_a_ta_venue_A4-avecMusique.pdf",
+        "instruMidi": "CV_191-polyinstru-Jusqu_a_ta_venue.mid"
+    },
+    {
+        "numero": "193",
+        "titre": "Le signal de la victoire",
+        "pdfA4": "CV_193-Le_signal_de_la_victoire_A4-avecMusique.pdf",
+        "instruMidi": "CV_193-polyinstru-Le_signal_de_la_victoire.mid"
+    },
+    {
+        "numero": "194",
+        "titre": "Sans attendre",
+        "pdfA4": "CV_194-Sans_attendre_A4-avecMusique.pdf",
+        "instruMidi": "CV_194-polyinstru-Sans_attendre.mid"
+    },
+    {
+        "numero": "200",
+        "titre": "Veille toujours",
+        "pdfA4": "CV_200-Veille_toujours_A4-avecMusique.pdf",
+        "instruMidi": "CV_200-polyinstru-Veille_toujours.mid"
+    },
+    {
+        "numero": "201",
+        "titre": "À celui qui sera vainqueur",
+        "pdfA4": "CV_201-A_celui_qui_sera_vainqueur_A4-avecMusique.pdf",
+        "instruMidi": "CV_201-polyinstru-A_celui_qui_sera_vainqueur.mid"
+    },
+    {
+        "numero": "202",
+        "titre": "Vous qui gardez les murs",
+        "pdfA4": "CV_202-Vous_qui_gardez_les_murs_A4-avecMusique.pdf",
+        "instruMidi": "CV_202-polyinstru-Vous_qui_gardez_les_murs.mid"
+    },
+    {
+        "numero": "203",
+        "titre": "Sentinelle vigilante",
+        "pdfA4": "CV_203-mono-piano-Sentinelle_vigilante_A4-avecMusique.pdf",
+        "instruMidi": "CV_203-polyinstru-Sentinelle_vigilante.mid"
+    },
+    {
+        "numero": null,
+        "titre": "Debout, sainte cohorte!",
+        "pdfA4": "CV_204a-mono-piano-Debout_sainte_cohorte_A4-avecMusique.pdf",
+        "instruMidi": "CV_204a-polyinstru-Debout_sainte_cohorte.mid"
+    },
+    {
+        "numero": "205",
+        "titre": "Travaillons et luttons",
+        "pdfA4": "CV_205-Travaillons_et_luttons_A4-avecMusique.pdf",
+        "instruMidi": "CV_205-polyinstru-Travaillons_et_luttons.mid"
+    },
+    {
+        "numero": "207",
+        "titre": "Maître, entends-tu la tempête",
+        "pdfA4": "CV_207-Maitre_entends-tu_la_tempete_A4-avecMusique.pdf",
+        "instruMidi": "CV_207-polyinstru-Maitre_entends-tu_la_tempete.mid"
+    },
+    {
+        "numero": "208",
+        "titre": "Compte les bienfaits de Dieu",
+        "pdfA4": "CV_208-Compte_les_bienfaits_de_Dieu_A4-avecMusique.pdf",
+        "instruMidi": "CV_208-polyinstru-Compte_les_bienfaits_de_Dieu.mid"
+    },
+    {
+        "numero": "210",
+        "titre": "Une nacelle en silence",
+        "pdfA4": "CV_210-Une_nacelle_en_silence_A4-avecMusique.pdf",
+        "instruMidi": "CV_210-polyinstru-Une_nacelle_en_silence.mid"
+    },
+    {
+        "numero": "211",
+        "titre": "Tout est bien",
+        "pdfA4": "CV_211-Tout_est_bien_A4-avecMusique.pdf",
+        "instruMidi": "CV_211-polyinstru-Tout_est_bien.mid"
+    },
+    {
+        "numero": "213",
+        "titre": "Invoque-moi",
+        "pdfA4": "CV_213-Invoque-moi_A4-avecMusique.pdf",
+        "instruMidi": "CV_213-polyinstru-Invoque-moi.mid"
+    },
+    {
+        "numero": null,
+        "titre": "Oh! quelle paix parfaite",
+        "pdfA4": "CV_215a-Oh_quelle_paix_parfaite_A4-avecMusique.pdf",
+        "instruMidi": "CV_215a-polyinstru-Oh_quelle_paix_parfaite.mid"
+    },
+    {
+        "numero": "219",
+        "titre": "Dans ce triste monde",
+        "pdfA4": "CV_219-Dans_ce_triste_monde_A4-avecMusique.pdf",
+        "instruMidi": "CV_219-polyinstru-Dans_ce_triste_monde.mid"
+    },
+    {
+        "numero": "221",
+        "titre": "Tiens dans ta main, ta main fidèle et forte (original anglais HWR 373)",
+        "pdfA4": "CV_221-mono-piano-Tiens_dans_ta_main_A4-avecMusique.pdf",
+        "instruMidi": "CV_221-polyinstru-Tiens_dans_ta_main.mid"
+    },
+    {
+        "numero": "222",
+        "titre": "Ton fidèle amour",
+        "pdfA4": "CV_222-Ton_fidele_amour_A4-avecMusique.pdf",
+        "instruMidi": "CV_222-polyinstru-Ton_fidele_amour.mid"
+    },
+    {
+        "numero": "223",
+        "titre": "À Jésus je m'abandonne (= ATG 329)",
+        "pdfA4": "CV_223-A_Jesus_je_m_abandonne_A4-avecMusique.pdf",
+        "instruMidi": "CV_223-polyinstru-A_Jesus_je_m_abandonne.mid"
+    },
+    {
+        "numero": "224",
+        "titre": "Comme un fleuve immense",
+        "pdfA4": "CV_224-Comme_un_fleuve_immense_A4-avecMusique.pdf",
+        "instruMidi": "CV_224-polyinstru-Comme_un_fleuve_immense.mid"
+    },
+    {
+        "numero": "226",
+        "titre": "Ne crains pas",
+        "pdfA4": "CV_226-Ne_crains_rien_A4-avecMusique.pdf",
+        "instruMidi": "CV_226-polyinstru-Ne_crains_rien.mid"
+    },
+    {
+        "numero": "230",
+        "titre": "Un chrétien je croyais être",
+        "pdfA4": "CV_230-Un_chretien_je_croyait_etre_A4-avecMusique.pdf",
+        "instruMidi": "CV_230-polyinstru-Un_chretien_je_croyait_etre.mid"
+    },
+    {
+        "numero": "233",
+        "titre": "Je ne sais pourquoi Dieu dans sa grâce.. mais je sais...",
+        "pdfA4": "CV_233-mono-piano-Je_sais_A4-avecMusique.pdf",
+        "instruMidi": "CV_233-polyinstru-Je_sais.mid"
+    },
+    {
+        "numero": "234",
+        "titre": "Quel ami fidèle et tendre! (original anglais)",
+        "pdfA4": "CV_234-Quel_ami_fidele_et_tendre_A4-avecMusique.pdf",
+        "instruMidi": "CV_234-polyinstru-Quel_ami_fidele_et_tendre.mid"
+    },
+    {
+        "numero": "236",
+        "titre": "Oh! jour béni, jour de victoire",
+        "pdfA4": "CV_236-O_jour_beni_jour_de_victoire_A4-avecMusique.pdf",
+        "instruMidi": "CV_236-polyinstru-O_jour_beni_jour_de_victoire.mid"
+    },
+    {
+        "numero": "237",
+        "titre": "Aux jours d'angoisse et de souffrance",
+        "pdfA4": "CV_237-Aux_jours_d_angoisse_et_de_souffrance_A4-avecMusique.pdf",
+        "instruMidi": "CV_237-polyinstru-Aux_jours_d_angoisse_et_de_souffrance.mid"
+    },
+    {
+        "numero": "238",
+        "titre": "Oui, selon ta promesse",
+        "pdfA4": "CV_238-Oui_selon_ta_promesse_A4-avecMusique.pdf",
+        "instruMidi": "CV_238-polyinstru-Oui_selon_ta_promesse.mid"
+    },
+    {
+        "numero": "240",
+        "titre": "Un seul pas à la fois",
+        "pdfA4": "CV_240-Un_seul_pas_a_la_fois_A4-avecMusique.pdf",
+        "instruMidi": "CV_240-polyinstru-Un_seul_pas_a_la_fois.mid"
+    },
+    {
+        "numero": "241",
+        "titre": "Saisis ma main craintive",
+        "pdfA4": "CV_241-Saisis_ma_main_craintive_A4-avecMusique.pdf",
+        "instruMidi": "CV_241-polyinstru-Saisis_ma_main_craintive.mid"
+    },
+    {
+        "numero": "243",
+        "titre": "Quel repos céleste",
+        "pdfA4": "CV_243-mono-piano-Quel_repos_A4-avecMusique.pdf",
+        "instruMidi": "CV_243-polyinstru-Quel_repos.mid"
+    },
+    {
+        "numero": "246",
+        "titre": "C'est à l'ombre de tes ailes qu'est le vrai repos",
+        "pdfA4": "CV_246-A_lombre_de_tes_ailes_A4-avecMusique.pdf",
+        "instruMidi": "CV_246-polyinstru-A_lombre_de_tes_ailes.mid"
+    },
+    {
+        "numero": "249",
+        "titre": "J'ai soif de ta présence",
+        "pdfA4": "CV_249-J_ai_soif_de_ta_presence_A4-avecMusique.pdf",
+        "instruMidi": "CV_249-polyinstru-J_ai_soif_de_ta_presence.mid"
+    },
+    {
+        "numero": "251",
+        "titre": "Ici pleurer et souffrir",
+        "pdfA4": "CV_251-mono-piano-Ici_pleurer_et_souffrir_A4-avecMusique.pdf",
+        "instruMidi": "CV_251-polyinstru-Ici_pleurer_et_souffrir.mid"
+    },
+    {
+        "numero": "252",
+        "titre": "Voir mon Sauveur face à face",
+        "pdfA4": "CV_252-Voir_mon_Sauveur_face_a_face_A4-avecMusique.pdf",
+        "instruMidi": "CV_252-polyinstru-Voir_mon_Sauveur_face_a_face.mid"
+    },
+    {
+        "numero": "253",
+        "titre": "La trompette a retenti",
+        "pdfA4": "CV_253-La_trompette_a_retenti_A4-avecMusique.pdf",
+        "instruMidi": "CV_253-polyinstru-La_trompette_a_retenti.mid"
+    },
+    {
+        "numero": "254",
+        "titre": "Il va venir le Seigneur que j'adore",
+        "pdfA4": "CV_254-Il_va_venir_le_Seigneur_que_jadore_A4-avecMusique.pdf",
+        "instruMidi": "CV_254-polyinstru-Il_va_venir_le_Seigneur_que_jadore.mid"
+    },
+    {
+        "numero": "257",
+        "titre": "Je ne sais pas le jour",
+        "pdfA4": "CV_257-Je_ne_sais_pas_le_jour_A4-avecMusique.pdf",
+        "instruMidi": "CV_257-polyinstru-Je_ne_sais_pas_le_jour.mid"
+    },
+    {
+        "numero": "261",
+        "titre": "Nombreux comme le sable des plages",
+        "pdfA4": "CV_261-Nombreux_comme_le_sable_A4-avecMusique.pdf",
+        "instruMidi": "CV_261-polyinstru-Nombreux_comme_le_sable.mid"
+    },
+    {
+        "numero": "264",
+        "titre": "Avec allégresse",
+        "pdfA4": "CV_264-Avec_allegresse_A4-avecMusique.pdf",
+        "instruMidi": "CV_264-polyinstru-Avec_allegresse.mid"
+    },
+    {
+        "numero": "265",
+        "titre": "Vers le ciel",
+        "pdfA4": "CV_265-Vers_le_ciel_A4-avecMusique.pdf",
+        "instruMidi": "CV_265-polyinstru-Vers_le_ciel.mid"
+    },
+    {
+        "numero": "268",
+        "titre": "Pèlerin sur cette terre",
+        "pdfA4": "CV_268-Pelerin_sur_cette_terre_A4-avecMusique.pdf",
+        "instruMidi": "CV_268-polyinstru-Pelerin_sur_cette_terre.mid"
+    },
+    {
+        "numero": "272",
+        "titre": "Connais-tu cette cité",
+        "pdfA4": "CV_272-Connais_tu_cette_cite_A4-avecMusique.pdf",
+        "instruMidi": "CV_272-polyinstru-Connais_tu_cette_cite-soprano.mid"
+    },
+    {
+        "numero": "273",
+        "titre": "Contempler mon Dieu sur son trône",
+        "pdfA4": "CV_273-Contempler_mon_Dieu_sur_son_trone_A4-avecMusique.pdf",
+        "instruMidi": "CV_273-polyinstru-Contempler_mon_Dieu_sur_son_trone.mid"
+    },
+    {
+        "numero": "274",
+        "titre": "Au ciel est la maison du Père",
+        "pdfA4": "CV_274-Au_ciel_est_la_maison_du_Pere_A4-avecMusique.pdf",
+        "instruMidi": "CV_274-polyinstru-Au_ciel_est_la_maison_du_Pere.mid"
+    },
+    {
+        "numero": "275",
+        "titre": "Nous attendons le Sauveur glorieux",
+        "pdfA4": "CV_275-Nous_attendons_le_Sauveur_glorieux_A4-avecMusique.pdf",
+        "instruMidi": "CV_275-polyinstru-Nous_attendons_le_Sauveur_glorieux.mid"
+    },
+    {
+        "numero": "279",
+        "titre": "Béni soit le lien",
+        "pdfA4": "CV_279-Beni_soit_le_lien_A4-avecMusique.pdf",
+        "instruMidi": "CV_279-polyinstru-Beni_soit_le_lien.mid"
+    },
+    {
+        "numero": "286",
+        "titre": "Chant d'adieu",
+        "pdfA4": "CV_286-Chant_d_adieu_A4-avecMusique.pdf",
+        "instruMidi": "CV_286-polyinstru-Chant_d_adieu.mid"
+    },
+    {
+        "numero": "288",
+        "titre": "Le chant du réveil",
+        "pdfA4": "CV_288-Le_Chant_du_Reveil_A4-avecMusique.pdf",
+        "instruMidi": "CV_288-polyinstru-Le_Chant_du_Reveil.mid"
+    },
+    {
+        "numero": "290",
+        "titre": "Christ est ma portion",
+        "pdfA4": "CV_290-Christ_est_ma_portion_A4-avecMusique.pdf",
+        "instruMidi": "CV_290-polyinstru-Christ_est_ma_portion.mid"
+    },
+    {
+        "numero": "292",
+        "titre": "Suivez, suivez l'Agneau",
+        "pdfA4": "CV_292-Suivez_l_Agneau_A4-avecMusique.pdf",
+        "instruMidi": "CV_292-polyinstru-Suivez_l_Agneau.mid"
+    },
+    {
+        "numero": "293",
+        "titre": "Tout joyeux, bénissons le Seigneur",
+        "pdfA4": "CV_293-Tout_joyeux_benissons_A4-avecMusique.pdf",
+        "instruMidi": "CV_293-polyinstru-Tout_joyeux_benissons.mid"
+    },
+    {
+        "numero": "294",
+        "titre": "Je suis petit, mais que m'importe",
+        "pdfA4": "CV_294-Je_suis_petit_A4-avecMusique.pdf",
+        "instruMidi": "CV_294-polyinstru-Je_suis_petit.mid"
+    },
+    {
+        "numero": "295",
+        "titre": "Nul enfant n'est trop petit pour la route étroite",
+        "pdfA4": "CV_295-Nul_enfant_nest_trop_petit_A4-avecMusique.pdf",
+        "instruMidi": "CV_295-polyinstru-Nul_enfant_nest_trop_petit.mid"
+    },
+    {
+        "numero": "298",
+        "titre": "Bientôt Jésus va nous prendre",
+        "pdfA4": "CV_298-Bientot_Jesus_va_nous_prendre_A4-avecMusique.pdf",
+        "instruMidi": "CV_298-polyinstru-Bientot_Jesus_va_nous_prendre.mid"
+    },
+    {
+        "numero": "299",
+        "titre": "Je suis la lumière",
+        "pdfA4": "CV_299-Je_suis_la_lumiere_A4-avecMusique.pdf",
+        "instruMidi": "CV_299-polyinstru-Je_suis_la_lumiere.mid"
+    },
+    {
+        "numero": "301",
+        "titre": "Bon Sauveur, Berger fidèle",
+        "pdfA4": "CV_301-Bon_Sauveur_berger_fidele_A4-avecMusique.pdf",
+        "instruMidi": "CV_301-polyinstru-Bon_Sauveur_berger_fidele.mid"
+    },
+    {
+        "numero": "302",
+        "titre": "Le Seigneur m'aime",
+        "pdfA4": "CV_302-Le_Seigneur_m_aime_A4-avecMusique.pdf",
+        "instruMidi": "CV_302-polyinstru-Le_Seigneur_m_aime.mid"
+    },
+    {
+        "numero": "303",
+        "titre": "Sous le sang, le précieux sang",
+        "pdfA4": "CV_303-Sous_le_sang_le_precieux_sang_A4-avecMusique.pdf",
+        "instruMidi": "CV_303-polyinstru-Sous_le_sang_le_precieux_sang.mid"
+    },
+    {
+        "numero": "304",
+        "titre": "Jésus quitta le trône de son Père",
+        "pdfA4": "CV_304-Jesus_quitta_le_trone_A4-avecMusique.pdf",
+        "instruMidi": "CV_304-polyinstru-Jesus_quitta_le_trone.mid"
+    },
+    {
+        "numero": "305",
+        "titre": "Comme un rayon de soleil",
+        "pdfA4": "CV_305-Rayon_de_soleil_A4-avecMusique.pdf",
+        "instruMidi": "CV_305-polyinstru-Rayon_de_soleil.mid"
+    },
+    {
+        "numero": "306",
+        "titre": "Chaque jour de ma vie",
+        "pdfA4": "CV_306-Chaque_jour_de_ma_vie_A4-avecMusique.pdf",
+        "instruMidi": "CV_306-polyinstru-Chaque_jour_de_ma_vie.mid"
+    },
+    {
+        "numero": "307",
+        "titre": "Il est un pays magnifique",
+        "pdfA4": "CV_307-Il_est_un_pays_magnifique_A4-avecMusique.pdf",
+        "instruMidi": "CV_307-polyinstru-Il_est_un_pays_magnifique.mid"
+    },
+    {
+        "numero": "309",
+        "titre": "Jésus ne change pas",
+        "pdfA4": "CV_309-Jesus_ne_change_pas_A4-avecMusique.pdf",
+        "instruMidi": "CV_309-polyinstru-Jesus_ne_change_pas.mid"
+    },
+    {
+        "numero": "310",
+        "titre": "David n'avait rien que sa frone",
+        "pdfA4": "CV_310-David_n_avait_rien_que_sa_fronde_A4-avecMusique.pdf",
+        "instruMidi": "CV_310-polyinstru-David_n_avait_rien_que_sa_fronde.mid"
+    },
+    {
+        "numero": "311",
+        "titre": "Prière de l'enfant à son coucher",
+        "pdfA4": "CV_311-priere_de_lenfant_a_son_coucher_A4-avecMusique.pdf",
+        "instruMidi": "CV_311-polyinstru-priere_de_lenfant_a_son_coucher.mid"
+    }
+]
