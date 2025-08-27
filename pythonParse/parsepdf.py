@@ -145,34 +145,13 @@ def process_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
 def generate_html_from_dataframe(df: pd.DataFrame, page_title: str):
     """
-    Génère un fichier HTML à partir du DataFrame avec un style dynamique.
-    Les coordonnées sont utilisées pour positionner les éléments.
+    Génère un fichier HTML pour afficher le texte sur un canvas.
     """
     print("Génération du fichier HTML...")
-    
-    # Récupérer toutes les coordonnées uniques
-    unique_x = sorted(df['x'].unique())
-    unique_y = sorted(df['y'].unique(), reverse=True)
-    
-    # Créer une matrice de mots basée sur les coordonnées
-    data_matrix = pd.DataFrame(index=unique_y, columns=unique_x).fillna('')
-    for _, row in df.iterrows():
-        x_val = row['x']
-        y_val = row['y']
-        text_val = row['text']
-        data_matrix.loc[y_val, x_val] = text_val
-        
-    # Calculer les largeurs de colonnes
-    col_widths = []
-    for i in range(len(unique_x)):
-        if i < len(unique_x) - 1:
-            width = (unique_x[i+1] - unique_x[i]) + 10  # 10px de plus pour l'espacement
-        else:
-            width = 100 # Largeur par défaut pour la dernière colonne
-        col_widths.append(f'{width}px')
-    
-    col_width_css = ' '.join(col_widths)
 
+    # Serialize the dataframe to a JSON string
+    df_json = df.to_json(orient='records')
+    
     html_content = f"""
 <!DOCTYPE html>
 <html lang="fr">
@@ -184,45 +163,50 @@ def generate_html_from_dataframe(df: pd.DataFrame, page_title: str):
         body {{ font-family: sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }}
         .container {{ max-width: 800px; margin: 20px auto; padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
         h1 {{ color: #333; text-align: center; }}
-        .responsive-table {{ overflow-x: auto; }}
-        table {{ border-collapse: collapse; font-size: 14px; table-layout: fixed; }}
-        th, td {{ padding: 8px; text-align: left; border: 1px solid #ddd; }}
-        th {{ background-color: #f2f2f2; font-weight: bold; }}
-        .text-cell {{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
-        col {{ width: 100px; }}
+        canvas {{ border: 1px solid #ddd; display: block; margin: 0 auto; }}
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Analyse de la partition : {page_title}</h1>
-        <div class="responsive-table">
-            <table>
-                <colgroup>
-                    <col style="width: 50px;"> <!-- Largeur pour la colonne Y/X -->
-                    {"".join(f'<col style="width: {w};">' for w in col_widths)}
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>Y/X</th>
-                        {"".join(f"<th>{x}</th>" for x in unique_x)}
-                    </tr>
-                </thead>
-                <tbody>
-    """
-    
-    for y_coord, row in data_matrix.iterrows():
-        html_content += f"""
-        <tr>
-            <th>{y_coord}</th>
-            {"".join(f'<td class="text-cell" title="{cell}">{cell}</td>' for cell in row)}
-        </tr>
-        """
-    
-    html_content += """
-                </tbody>
-            </table>
-        </div>
+        <canvas id="partitionCanvas"></canvas>
     </div>
+
+    <script>
+        const canvas = document.getElementById('partitionCanvas');
+        const ctx = canvas.getContext('2d');
+        const dfData = {df_json};
+
+        function drawText() {{
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set font properties
+            ctx.font = '10px sans-serif';
+            ctx.fillStyle = '#333';
+            ctx.textAlign = 'left';
+
+            // Find max x and y to set canvas dimensions
+            const maxX = Math.max(...dfData.map(item => item.x));
+            const maxY = Math.max(...dfData.map(item => item.y));
+
+            canvas.width = maxX + 50;
+            canvas.height = maxY + 50;
+
+            // Draw each word at its coordinates
+            dfData.forEach(item => {{
+                // Adjust y coordinate to be relative to the top of the canvas
+                const y_adjusted = canvas.height - item.y;
+                ctx.fillText(item.text, item.x, y_adjusted);
+            }});
+        }}
+        
+        // Initial drawing
+        drawText();
+
+        // Redraw on window resize
+        window.addEventListener('resize', drawText);
+    </script>
 </body>
 </html>
     """

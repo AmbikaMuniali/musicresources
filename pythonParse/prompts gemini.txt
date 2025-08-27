@@ -10,3 +10,18 @@ le point . permet des croches et la virgules des doubles croches. trouve un moye
 
 cette fois, je veux la sortie du fichier python en format json, stucture de maniere à être facilement converible en format musicxml
 
+-------------------------------
+peut revenir c'est a dire il y a un retour a la ligne des4 voix. ainsi une 5e ligne de note est toujour la premiere voix la 6e est toujours la 2e voix.
+
+la premiere et 2e commencent à l'octave 4 pendant la 3e et la 4e voix sont a loctave 3. 
+
+le symble | en indice ou en exposant permet d'índiquer lóctave superieur à loctave initiale de la voix
+
+--------------------
+│ : s │ .s │ s │ : ‒.d | t │ .d : d .d l │ : d | ‒.d : d .d d : ‒.s │ | t │ .t │
+----------------------
+je desire que tu genere d'abord une structure en forme table en colonne chaque texte trouve etant dans la colonne ligne et la colonne corespondant a ses coordonnee. met ca dans une dataframe.
+ ensuite travaille sur le data frame : les lignes qui son distantes de moins de 5 sont de meme couleur. la coloration egalement du type de ligne: pour chaque ligne dit si c'est notes ou lyrics. 
+genere un fichier html pour stoquer le dataframe inspire toi de l'exemple. ajoute une mise en forme qui impose la taille des celle proportionnelle a ses coordonnes. si  le texte est long fait ellipse.
+genere ausssi un fichier json avec les memes fonctionnalité que dans le code donné
+toujours 
