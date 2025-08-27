@@ -8,7 +8,8 @@ Ce script a été mis à jour pour :
 1.  Créer un DataFrame pandas avec les coordonnées et le texte de chaque élément.
 2.  Classifier chaque ligne comme 'notes' ou 'lyrics'.
 3.  Colorer les lignes qui sont à moins de 5 pixels les unes des autres.
-4.  Générer un fichier HTML pour visualiser le DataFrame avec un style dynamique.
+4.  Générer un fichier HTML pour visualiser le DataFrame avec un style dynamique, incluant
+    le décalage des symboles et des flèches pour lier les notes.
 5.  Générer un fichier JSON avec la même structure que le code initial, mais avec une gestion améliorée.
 """
 
@@ -32,7 +33,7 @@ RHYTHM_TO_DURATION = {
     ',': {'duration': 16, 'type': 'sixteenth'}
 }
 
-# --- Nouvelles fonctions pour le traitement et l'analyse ---
+# --- Fonctions pour le traitement et l'analyse ---
 
 def extract_text_with_coordinates(pdf_path: str, page_num: int) -> pd.DataFrame:
     """
@@ -108,55 +109,140 @@ def extract_text_with_coordinates(pdf_path: str, page_num: int) -> pd.DataFrame:
 def classify_and_annotate_text(df: pd.DataFrame) -> pd.DataFrame:
     """
     Classifie chaque élément de texte et lui attribue un ID.
-    Les types de textes sont : 'note', 'rhythm', 'octave', 'lyric'.
+    Sépare les notes et les symboles de temps/octave si elles sont dans la même chaîne de texte.
+    Les types de textes sont : 'note', 'rhythm', 'octave', 'continuation', 'lyric'.
     """
     print("Classification et annotation des textes...")
-    df['type'] = 'lyric'
-    df['id'] = ''
+    new_data = []
     
     note_id_counter = 0
     rhythm_id_counter = 0
     octave_id_counter = 0
+    continuation_id_counter = 0
 
-    for index, row in df.iterrows():
-        text = row['text'].strip()
-        
-        # Classification des notes (contient une lettre de d, r, m, f, s, l, t)
-        note_regex = r'[drmfslt]'
-        if re.search(note_regex, text, re.IGNORECASE):
-            df.loc[index, 'type'] = 'note'
-            # Attribuer un ID pour chaque note trouvée dans la chaîne
-            notes = re.findall(note_regex, text, re.IGNORECASE)
-            note_ids = []
-            for note in notes:
-                note_id_counter += 1
-                note_ids.append(f"note_{note_id_counter}")
-            df.loc[index, 'id'] = ",".join(note_ids)
-        
-        # Classification des signes d'octave (│)
-        octave_regex = r'│\d'
-        if re.search(octave_regex, text):
-            df.loc[index, 'type'] = 'octave'
-            octave_id_counter += 1
-            df.loc[index, 'id'] = f"octave_{octave_id_counter}"
-        
-        # Classification des signes de rythme et de temps (., : |)
-        # Note: on vérifie ici s'il ne s'agit pas d'un signe d'octave pour éviter les confusions
-        rhythm_regex = r'[:.,|]'
-        if re.search(rhythm_regex, text) and df.loc[index, 'type'] != 'octave':
-            df.loc[index, 'type'] = 'rhythm'
-            rhythm_id_counter += 1
-            df.loc[index, 'id'] = f"rhythm_{rhythm_id_counter}"
-            
+    # Définition des expressions régulières pour la décomposition
+    # Les expressions sont dans l'ordre de priorité (notes, octaves, rythmes, continuation)
+    note_regex = r'[drmfslt]'
+    octave_regex = r'│'
+    rhythm_regex = r'[\:\.\,\|]'
+    continuation_regex = r'-'
 
-    # Si le type n'a pas été changé, il reste 'lyric'
-    df['type'] = df.apply(
-        lambda row: 'lyric' if row['type'] not in ['note', 'rhythm', 'octave'] else row['type'],
-        axis=1
-    )
+    combined_regex = f"({octave_regex}|{note_regex}|{rhythm_regex}|{continuation_regex})"
     
+    for _, row in df.iterrows():
+        text_to_process = row['text'].strip()
+        
+        # S'assurer que le texte ne contient que des espaces s'il n'y a rien d'autre
+        if not text_to_process:
+            continue
+
+        # Utiliser re.split pour découper la chaîne en gardant les délimiteurs
+        # Ce n'est pas aussi simple car il faut aussi gérer les mots restants.
+        # Une approche manuelle est plus fiable.
+        
+        matches = list(re.finditer(combined_regex, text_to_process, re.IGNORECASE))
+        
+        if not matches:
+            # Si aucun symbole ou note n'est trouvé, le texte est une parole
+            new_data.append({
+                'text': text_to_process,
+                'x': row['x'],
+                'y': row['y'],
+                'type': 'lyric',
+                'id': ''
+            })
+        else:
+            last_pos = 0
+            for match in matches:
+                # Gérer le texte qui précède le match (s'il existe)
+                preceding_text = text_to_process[last_pos:match.start()].strip()
+                if preceding_text:
+                    new_data.append({
+                        'text': preceding_text,
+                        'x': row['x'],
+                        'y': row['y'],
+                        'type': 'lyric',
+                        'id': ''
+                    })
+                
+                # Gérer le texte du match lui-même
+                matched_text = match.group(0)
+                
+                if re.search(octave_regex, matched_text):
+                    octave_id_counter += 1
+                    new_data.append({
+                        'text': matched_text,
+                        'x': row['x'],
+                        'y': row['y'],
+                        'type': 'octave',
+                        'id': f"octave_{octave_id_counter}"
+                    })
+                elif re.search(note_regex, matched_text, re.IGNORECASE):
+                    note_id_counter += 1
+                    new_data.append({
+                        'text': matched_text,
+                        'x': row['x'],
+                        'y': row['y'],
+                        'type': 'note',
+                        'id': f"note_{note_id_counter}"
+                    })
+                elif re.search(rhythm_regex, matched_text):
+                    rhythm_id_counter += 1
+                    new_data.append({
+                        'text': matched_text,
+                        'x': row['x'],
+                        'y': row['y'],
+                        'type': 'rhythm',
+                        'id': f"rhythm_{rhythm_id_counter}"
+                    })
+                elif re.search(continuation_regex, matched_text):
+                    continuation_id_counter += 1
+                    new_data.append({
+                        'text': matched_text,
+                        'x': row['x'],
+                        'y': row['y'],
+                        'type': 'continuation',
+                        'id': f"continuation_{continuation_id_counter}"
+                    })
+                
+                last_pos = match.end()
+
+            # Gérer le texte restant après le dernier match
+            remaining_text = text_to_process[last_pos:].strip()
+            if remaining_text:
+                new_data.append({
+                    'text': remaining_text,
+                    'x': row['x'],
+                    'y': row['y'],
+                    'type': 'lyric',
+                    'id': ''
+                })
+
+    df_final = pd.DataFrame(new_data)
     print("Classification terminée.")
+    return df_final
+
+def associate_symbols_to_notes(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Associe les symboles de rythme et de continuation aux notes précédentes.
+    """
+    print("Association des symboles aux notes...")
+    df = df.copy()
+    df['associated_id'] = None
+    note_ids = df[df['type'] == 'note']['id'].tolist()
+    
+    for index, row in df.iterrows():
+        if row['type'] in ['rhythm', 'continuation', 'octave']:
+            # Trouver la note la plus proche (à gauche) dans la même ligne
+            line_notes = df[(df['y'] == row['y']) & (df['x'] < row['x']) & (df['type'] == 'note')]
+            if not line_notes.empty:
+                # La note la plus proche est la dernière note de la ligne avant le symbole
+                last_note_id = line_notes.iloc[-1]['id']
+                df.loc[index, 'associated_id'] = last_note_id
+    
+    print("Association terminée.")
     return df
+
 
 def generate_html_from_dataframe(df: pd.DataFrame, page_title: str):
     """
@@ -180,12 +266,18 @@ def generate_html_from_dataframe(df: pd.DataFrame, page_title: str):
         .container {{ max-width: 800px; margin: 20px auto; padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
         h1 {{ color: #333; text-align: center; }}
         canvas {{ border: 1px solid #ddd; display: block; margin: 0 auto; }}
+        #info-box {{ margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9; font-size: 12px; }}
+        #info-box h3 {{ margin-top: 0; }}
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Analyse de la partition : {page_title}</h1>
         <canvas id="partitionCanvas"></canvas>
+        <div id="info-box">
+            <h3>Informations sur les éléments</h3>
+            Cliquez sur un symbole (bleu, vert ou gris) pour voir sa note associée.
+        </div>
     </div>
 
     <script>
@@ -197,18 +289,18 @@ def generate_html_from_dataframe(df: pd.DataFrame, page_title: str):
             'note': 'black',
             'rhythm': 'green',
             'octave': 'blue',
+            'continuation': 'gray',
             'lyric': 'red'
         }};
 
-        function drawText() {{
-            // Clear the canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Dictionnaire pour stocker les coordonnées des notes par ID
+        const notePositions = {{}};
 
-            // Set font properties
+        function drawText() {{
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'left';
 
-            // Find max x and y to set canvas dimensions
             const maxX = Math.max(...dfData.map(item => item.x)) || 0;
             const maxY = Math.max(...dfData.map(item => item.y)) || 0;
             const minX = Math.min(...dfData.map(item => item.x)) || 0;
@@ -221,12 +313,37 @@ def generate_html_from_dataframe(df: pd.DataFrame, page_title: str):
             const xOffset = -minX + padding;
             const yOffset = -minY + padding;
 
-            // Draw each word at its coordinates
             dfData.forEach(item => {{
-                // Adjust y coordinate to be relative to the top of the canvas
                 const y_adjusted = canvas.height - (item.y + yOffset);
+                
+                // Décalage pour les symboles de rythme/continuation
+                let x_adjusted = item.x + xOffset;
+                if (item.type === 'rhythm' || item.type === 'continuation') {{
+                    x_adjusted += 5; // Décalage pour le visuel
+                }}
+                
                 ctx.fillStyle = colors[item.type] || 'black';
-                ctx.fillText(item.text, item.x + xOffset, y_adjusted);
+                ctx.fillText(item.text, x_adjusted, y_adjusted);
+                
+                // Stocker la position de chaque note
+                if (item.type === 'note') {{
+                    notePositions[item.id] = {{x: x_adjusted, y: y_adjusted}};
+                }}
+            }});
+            
+            // Dessiner les flèches après avoir dessiné le texte
+            dfData.forEach(item => {{
+                if (item.type === 'rhythm' || item.type === 'continuation' || item.type === 'octave') {{
+                    const associatedNotePos = notePositions[item.associated_id];
+                    if (associatedNotePos) {{
+                        const startX = item.x + xOffset + (item.text.length * 5); // Décalage + une estimation de la largeur du texte
+                        const startY = canvas.height - (item.y + yOffset);
+                        
+                        // Dessiner une simple flèche de texte pour la visualisation
+                        ctx.fillStyle = 'blue';
+                        ctx.fillText('→', startX, startY);
+                    }}
+                }}
             }});
         }}
         
@@ -273,12 +390,13 @@ def generate_json_from_dataframe(df: pd.DataFrame, pdf_title: str):
             "x": row['x'],
             "y": row['y'],
             "type": row['type'],
-            "id": row['id']
+            "id": row['id'],
+            "associated_id": row['associated_id'] # Ajout du lien
         })
         
     # Classification des lignes
     for y, line_data in lines_dict.items():
-        is_notes = any(elem['type'] in ['note', 'rhythm', 'octave'] for elem in line_data['elements'])
+        is_notes = any(elem['type'] in ['note', 'rhythm', 'octave', 'continuation'] for elem in line_data['elements'])
         line_data['type'] = 'notes' if is_notes else 'lyrics'
         line_data['text'] = " ".join(line_data['text'])
         
@@ -328,10 +446,13 @@ def main():
 
     # 2. Classification et annotation du texte
     df_classified = classify_and_annotate_text(df_coords)
+    
+    # 3. Association des symboles aux notes
+    df_final = associate_symbols_to_notes(df_classified)
 
-    # 3. Génération des fichiers de sortie
-    generate_html_from_dataframe(df_classified, pdf_title)
-    generate_json_from_dataframe(df_classified, pdf_title)
+    # 4. Génération des fichiers de sortie
+    generate_html_from_dataframe(df_final, pdf_title)
+    generate_json_from_dataframe(df_final, pdf_title)
 
 if __name__ == "__main__":
     main()
