@@ -1,0 +1,2092 @@
+{
+  "part-list": [
+    {
+      "part-id": "P1",
+      "part-name": "Soprano"
+    },
+    {
+      "part-id": "P2",
+      "part-name": "Alto"
+    },
+    {
+      "part-id": "P3",
+      "part-name": "Tenor"
+    },
+    {
+      "part-id": "P4",
+      "part-name": "Bass"
+    }
+  ],
+  "part": [
+    {
+      "id": "P1",
+      "measures": [
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ]
+      ],
+      "lyrics": []
+    },
+    {
+      "id": "P2",
+      "measures": [
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 1,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 1,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 1,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 4,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ]
+      ],
+      "lyrics": [
+        "1. Dieu Tout-Puissant Doh is Bb\nC.G. Boberg/  Manna Music  How great Thou art  ATG 55\n.s│:s│.s│m│: ‒.s │|s│.s│:l│.l│f│:l│| ‒.l │:l│.l│s│: ‒.m │|s│.s│\n.t2:d│.r│d│: ‒.m │|f│.m│:d│.f│d│:f│| ‒.f │:re│.re│m│: ‒.d │|m│.m│\nDieu Tout-Puissant, quand mon cœur considère, Tout l'u-ni- vers     cré -  é    par\n.s│:s│.s│s│: ‒.d |t│.d:d.dl│:d| ‒.d :d.dd: ‒.s │|t│.t│\n.s2:l2.t2d│: ‒.d │|r│.m│:f│.f│f│:f│| ‒.f │:fe│.fe│s│: ‒.s │|s2.s2\n:f│.f│m│: ‒| ‒.s │:s│.s│m│:‒.s │|s│.s│:l│.l│f│:l│| ‒.l │:l│.l│\n:r│.r│d│: ‒| ‒.t 2:d│.r│d│:‒.m │|f│.m│:d│.f│d│:f│| ‒.f │:re│.re│\nton  pouvoir ; Le  ciel d'a- zur,  les éclaires, les ton- ner-res,      Le    clair ma-\n:s│.s│s│: ‒| ‒.s │:s│.s│s│:‒.d |t│.d:d.dl│:d| ‒.d :d.d\n:t2.t2d│: ‒| ‒.s 2:l2.t2d│:‒.d │|r│.m│:f│.f│f│:f│| ‒.f │:fe│.fe│\ns│: ‒.m │|s│.s│:f│.f│m│:‒|‒.s│ : s │.dm: ‒.r |d.,t│:d.l│\nm│: ‒.d │|m│.m│:r│.r│d│:‒|‒.s│ : r│.f│s│: ‒.m │|f│.,f│:f│.f│\ntin        ou      les ombres du soir. De   tout mon être,     a  -  lors s'é-lève un\nd: ‒.s │|t│.t│:s│.s│s│:‒|‒.s│ : t│.l│d: ‒.ta │|l│.se│:l│.d\ns│: ‒.s │|s2.s2:t2.t2d│:‒|‒.s│ : f│.r│d│: ‒.d │|f│.,f│:f│.f│\ns│:‒|‒.d:d.t│r│:‒|‒.f│:l│.s│m│:‒|‒.s│:s│.dm: ‒.r\nm│:f│|m│.d│:d│.d│r│:d│|t2.r│:f│.r│d│:‒|‒.s│:r│.f│s│: ‒.m │\nchant : Dieu Tout-Puis- sant,           que Tu es grand !    De tout mon être,       a  -\nd:t│|d.s│:fe│.fe│f│:l│|s│.t│:t│.s│s│:‒|‒.s│:t│.l│d: ‒.ta │\nm│:r│|d│.m│:re│.re│r│:‒|‒.s│:s2.t2d│:‒|‒.s│:f│.r│d│: ‒.d │\n|d.,t│:d.l│s│:‒|‒.d:t│.d r:‒|‒.m:f.t│d:    ‒ | ‒.\n|f│.,f│:f│.f│m│:f│|m│.m│:s│.fe│f│:se│|s│.s│:s│.f│m│:    ‒ | ‒.\n lors s'élève un chant :   Dieu Tout-Puis- sant,            que Tu  es grand !\n|l│.se│:l│.dd:t│|d.s│:d.l│l│:d|t│.de:r.s│s│:    ‒ | ‒.\n|f│.,f│:f│.f│m│:r│|d│.d│:m│.re│r│:f│|s│.m│:r│.s│d│:    ‒ | ‒.\n2.  Quand par le bois ou la forêt profonde,\n    J'erre et j'entends tous les oiseaux chanter ;\n    Quand sur les monts, la source avec son onde,\n    Livre au zéphyr son chant doux et léger ;\n:/: Mon cœur heureux s'écrie à chaque instant : - O  Dieu d'amour, que Tu es grand ! :/: 3.  Mais quand je songe, ô sublîme mystère ! 4.  Quand mon Sauveur, éclatant de lumière,\n    Qu'un Dieu si grand a pu penser à moi,     Se lèvera de son trône éternel ;\n    Que Son cher Fils est devenu mon Frère,     Et que laissant les douleurs de la terre,\n    Et que je suis l'héritier du grand Roi ;     Je pourrai voir les splendeurs de son ciel !\n    :/: Alors mon cœur redit la nuit, le jour :     :/:  Je redirai, dans son divin séjour :\n    Que Tu es bon ! O ! Dieu d'Amour. :/:     Rien n'est plus grand que ton Amour. :/:",
+        "Dieu Tout-Puissant, quand mon cœur considère, Tout l'u-ni- vers     cré -  é    par",
+        "ton  pouvoir ; Le  ciel d'a- zur,  les éclaires, les ton- ner-res, Le    clair ma-",
+        "tin        ou      les ombres du soir. De   tout mon être,     a  -  lors s'é-lève un",
+        "chant : Dieu Tout-Puis- sant,           que Tu es grand ! De tout mon être,       a  -",
+        "lors s'élève un chant : Dieu Tout-Puis- sant,            que Tu  es grand !"
+      ]
+    },
+    {
+      "id": "P3",
+      "measures": [
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 1,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ]
+      ],
+      "lyrics": []
+    },
+    {
+      "id": "P4",
+      "measures": [
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 1,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "A",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 1,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "B",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 1,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "E",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "F",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "G",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ],
+        [
+          {
+            "type": "note",
+            "value": {
+              "step": "D",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          },
+          {
+            "type": "note",
+            "value": {
+              "step": "C",
+              "alter": 0,
+              "octave": 3,
+              "duration": 4,
+              "type": "quarter"
+            }
+          }
+        ]
+      ],
+      "lyrics": [
+        "3. Mais quand je songe, ô sublîme mystère ! 4. Quand mon Sauveur, éclatant de lumière,",
+        "Qu'un Dieu si grand a pu penser à moi, 2. Quand par le bois ou la forêt profonde, Se lèvera de son trône éternel ;",
+        "Que Son cher Fils est devenu mon Frère, J'erre et j'entends tous les oiseaux chanter ; Et que laissant les douleurs de la terre,",
+        "Et que je suis l'héritier du grand Roi ; Quand sur les monts, la source avec son onde, Je pourrai voir les splendeurs de son ciel !",
+        ":/: Alors mon cœur redit la nuit, le jour : Livre au zéphyr son chant doux et léger ; :/: Je redirai, dans son divin séjour :",
+        "Que Tu es bon ! O ! Dieu d'Amour. :/: :/: Mon cœur heureux s'écrie à chaque instant : - O  Dieu d'amour, que Tu es grand ! :/: Rien n'est plus grand que ton Amour. :/:"
+      ]
+    }
+  ]
+}

@@ -105,47 +105,63 @@ def extract_text_with_coordinates(pdf_path: str, page_num: int) -> pd.DataFrame:
         print(f"Erreur lors de l'extraction du texte : {e}")
         return pd.DataFrame()
 
-def process_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+def classify_and_annotate_text(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Traite le DataFrame pour ajouter des informations de groupe de ligne,
-    de type de ligne et de couleur.
+    Classifie chaque élément de texte et lui attribue un ID.
+    Les types de textes sont : 'note', 'rhythm', 'octave', 'lyric'.
     """
-    if df.empty:
-        return df
+    print("Classification et annotation des textes...")
+    df['type'] = 'lyric'
+    df['id'] = ''
     
-    # 1. Grouper les lignes par proximité Y
-    df = df.sort_values(by='y', ascending=False).reset_index(drop=True)
-    df['line_group'] = 0
-    df['line_type'] = ''
-    df['color'] = ''
-    group_id = 0
-    
-    if not df.empty:
-        df.loc[0, 'line_group'] = group_id
-        for i in range(1, len(df)):
-            if abs(df.loc[i, 'y'] - df.loc[i-1, 'y']) > 5:
-                group_id += 1
-            df.loc[i, 'line_group'] = group_id
-    
-    # Définir les couleurs pour les groupes
-    colors = ['#f2f2f2', '#eaf2f8']
-    df['color'] = df['line_group'].apply(lambda x: colors[x % 2])
-    
-    # 2. Classifier chaque ligne comme 'notes' ou 'lyrics'
-    grouped_lines = df.groupby('line_group')['text'].apply(list).reset_index()
-    
-    for index, row in grouped_lines.iterrows():
-        line_elements = row['text']
-        # Une ligne de notes contient majoritairement des éléments courts (<= 3 caractères)
-        is_notes = all(len(word.strip('.,')) <= 3 for word in line_elements)
-        line_type = 'notes' if is_notes else 'lyrics'
-        df.loc[df['line_group'] == row['line_group'], 'line_type'] = line_type
+    note_id_counter = 0
+    rhythm_id_counter = 0
+    octave_id_counter = 0
+
+    for index, row in df.iterrows():
+        text = row['text'].strip()
         
+        # Classification des notes (contient une lettre de d, r, m, f, s, l, t)
+        note_regex = r'[drmfslt]'
+        if re.search(note_regex, text, re.IGNORECASE):
+            df.loc[index, 'type'] = 'note'
+            # Attribuer un ID pour chaque note trouvée dans la chaîne
+            notes = re.findall(note_regex, text, re.IGNORECASE)
+            note_ids = []
+            for note in notes:
+                note_id_counter += 1
+                note_ids.append(f"note_{note_id_counter}")
+            df.loc[index, 'id'] = ",".join(note_ids)
+        
+        # Classification des signes d'octave (│)
+        octave_regex = r'│\d'
+        if re.search(octave_regex, text):
+            df.loc[index, 'type'] = 'octave'
+            octave_id_counter += 1
+            df.loc[index, 'id'] = f"octave_{octave_id_counter}"
+        
+        # Classification des signes de rythme et de temps (., : |)
+        # Note: on vérifie ici s'il ne s'agit pas d'un signe d'octave pour éviter les confusions
+        rhythm_regex = r'[:.,|]'
+        if re.search(rhythm_regex, text) and df.loc[index, 'type'] != 'octave':
+            df.loc[index, 'type'] = 'rhythm'
+            rhythm_id_counter += 1
+            df.loc[index, 'id'] = f"rhythm_{rhythm_id_counter}"
+            
+
+    # Si le type n'a pas été changé, il reste 'lyric'
+    df['type'] = df.apply(
+        lambda row: 'lyric' if row['type'] not in ['note', 'rhythm', 'octave'] else row['type'],
+        axis=1
+    )
+    
+    print("Classification terminée.")
     return df
 
 def generate_html_from_dataframe(df: pd.DataFrame, page_title: str):
     """
-    Génère un fichier HTML pour afficher le texte sur un canvas.
+    Génère un fichier HTML pour afficher le texte sur un canvas avec des couleurs
+    basées sur la classification.
     """
     print("Génération du fichier HTML...")
 
@@ -177,27 +193,40 @@ def generate_html_from_dataframe(df: pd.DataFrame, page_title: str):
         const ctx = canvas.getContext('2d');
         const dfData = {df_json};
 
+        const colors = {{
+            'note': 'black',
+            'rhythm': 'green',
+            'octave': 'blue',
+            'lyric': 'red'
+        }};
+
         function drawText() {{
             // Clear the canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Set font properties
             ctx.font = '10px sans-serif';
-            ctx.fillStyle = '#333';
             ctx.textAlign = 'left';
 
             // Find max x and y to set canvas dimensions
-            const maxX = Math.max(...dfData.map(item => item.x));
-            const maxY = Math.max(...dfData.map(item => item.y));
+            const maxX = Math.max(...dfData.map(item => item.x)) || 0;
+            const maxY = Math.max(...dfData.map(item => item.y)) || 0;
+            const minX = Math.min(...dfData.map(item => item.x)) || 0;
+            const minY = Math.min(...dfData.map(item => item.y)) || 0;
 
-            canvas.width = maxX + 50;
-            canvas.height = maxY + 50;
+            const padding = 20;
+            canvas.width = (maxX - minX) + 2 * padding;
+            canvas.height = (maxY - minY) + 2 * padding;
+
+            const xOffset = -minX + padding;
+            const yOffset = -minY + padding;
 
             // Draw each word at its coordinates
             dfData.forEach(item => {{
                 // Adjust y coordinate to be relative to the top of the canvas
-                const y_adjusted = canvas.height - item.y;
-                ctx.fillText(item.text, item.x, y_adjusted);
+                const y_adjusted = canvas.height - (item.y + yOffset);
+                ctx.fillStyle = colors[item.type] || 'black';
+                ctx.fillText(item.text, item.x + xOffset, y_adjusted);
             }});
         }}
         
@@ -242,12 +271,14 @@ def generate_json_from_dataframe(df: pd.DataFrame, pdf_title: str):
         lines_dict[y_val]["elements"].append({
             "text": row['text'],
             "x": row['x'],
-            "y": row['y']
+            "y": row['y'],
+            "type": row['type'],
+            "id": row['id']
         })
         
     # Classification des lignes
     for y, line_data in lines_dict.items():
-        is_notes = all(len(word.strip('.,')) <= 3 for word in line_data['text'])
+        is_notes = any(elem['type'] in ['note', 'rhythm', 'octave'] for elem in line_data['elements'])
         line_data['type'] = 'notes' if is_notes else 'lyrics'
         line_data['text'] = " ".join(line_data['text'])
         
@@ -295,9 +326,12 @@ def main():
         print("L'analyse a échoué. Fin du programme.")
         return
 
-    # 2. Génération des fichiers de sortie
-    generate_html_from_dataframe(df_coords, pdf_title)
-    generate_json_from_dataframe(df_coords, pdf_title)
+    # 2. Classification et annotation du texte
+    df_classified = classify_and_annotate_text(df_coords)
+
+    # 3. Génération des fichiers de sortie
+    generate_html_from_dataframe(df_classified, pdf_title)
+    generate_json_from_dataframe(df_classified, pdf_title)
 
 if __name__ == "__main__":
     main()

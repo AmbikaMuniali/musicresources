@@ -18,7 +18,7 @@ la premiere et 2e commencent à l'octave 4 pendant la 3e et la 4e voix sont a lo
 le symble | en indice ou en exposant permet d'índiquer lóctave superieur à loctave initiale de la voix
 
 --------------------
-│ : s │ .s │ s │ : ‒.d | t │ .d : d .d l │ : d | ‒.d : d .d d : ‒.s │ | t │ .t │
+│ : s │| .s │ s │ : ‒.d | t │ .d : d .d l │ : d | ‒.d : d .d d : ‒.s │ | t │ .t │
 ----------------------
 je desire que tu genere d'abord une structure en forme table en colonne chaque texte trouve etant dans la colonne ligne et la colonne corespondant a ses coordonnee. met ca dans une dataframe.
  ensuite travaille sur le data frame : les lignes qui son distantes de moins de 5 sont de meme couleur. la coloration egalement du type de ligne: pour chaque ligne dit si c'est notes ou lyrics. 
