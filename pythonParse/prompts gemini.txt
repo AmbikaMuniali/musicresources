@@ -1,0 +1,12 @@
+voici un exemple de la page que je voulais parser. il s'agit d'une partition tonic solfa. les lignes utilisee sont d r m f s l t les alteration diese avec e bemol ave a 
+
+les symboles utilisés : et | pour separer les temps,
+
+│pour indiquer octave superieur ou inférieur : trouve la bonne place en fonction de la hauteur du symbole par raport à la note qu'elle modifie.
+
+le point . permet des croches et la virgules des doubles croches. trouve un moyen de detecter si possible les { des systemes et les barres de mesures.
+
+
+
+cette fois, je veux la sortie du fichier python en format json, stucture de maniere à être facilement converible en format musicxml
+
