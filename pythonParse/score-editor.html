@@ -12,8 +12,6 @@
         }
         .note {
             cursor: pointer;
-            min-width: 45px;
-            text-align: center;
             position: relative;
         }
         .note-content, .symbol-content {
@@ -55,9 +53,10 @@
             text-align: right;
             padding-right: 10px;
             cursor: pointer;
+            vertical-align: top;
         }
         .lyrics-input {
-            width: 50px; /* Reduced width */
+            width: 50px;
             min-width: 45px;
             border: 1px solid #ccc;
             padding: 2px;
@@ -70,6 +69,19 @@
             margin: 0 1px;
             border-radius: 4px;
             color: white;
+        }
+        .beat-duration {
+            font-size: 0.75rem;
+            color: #4a5568;
+            margin-top: 2px;
+        }
+        .lyric-voice-editor {
+            font-size: 0.8rem;
+            text-align: left;
+        }
+        .lyric-voice-editor label {
+            margin-left: 4px;
+            font-weight: normal;
         }
     </style>
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
@@ -121,8 +133,9 @@
         <main>
             <div class="flex items-center mb-4">
                 <h2 class="text-2xl font-semibold mr-4">Partition</h2>
-                <button @click="addVoice" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 text-sm">+ Ajouter Voix</button>
+                <button @click="addVoice()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 text-sm">+ Ajouter Voix</button>
                 <button @click="addMeasureToAll" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mr-2 text-sm">+ Ajouter Mesure</button>
+                <button @click="addLyricLine" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded mr-2 text-sm">+ Ajouter Ligne Paroles</button>
                 <button @click="exportToJson" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm">Exporter en JSON</button>
             </div>
 
@@ -134,34 +147,34 @@
                         <table class="score-table">
                             <!-- Symboles -->
                             <tr>
-                                <td class="voice-name text-sm">Symboles</td>
-                                <td v-for="(beat, beatIndex) in score.voices[0].measures[measureIndex].beats" :colspan="beat.notes.length">
+                                <td v-if="measureIndex === 0" class="voice-name text-sm">Symboles</td>
+                                <td v-for="(beat, beatIndex) in score.voices[0].measures[measureIndex].beats">
                                     <input type="text" v-model="score.executionSymbols[measureIndex]" class="symbol-content w-full text-center" placeholder="p, f, 𝄐...">
                                 </td>
                             </tr>
                             <!-- Voix -->
                             <tr v-for="(voice, voiceIndex) in score.voices" :key="voice.id">
-                                <td class="voice-name" @click="editing.instrumentForVoice = voice.id">
+                                <td v-if="measureIndex === 0" class="voice-name" @click="editing.instrumentForVoice = voice.id">
                                     <span v-if="editing.instrumentForVoice !== voice.id">{{ voice.name }}</span>
                                     <select v-else v-model="voice.instrument" @blur="editing.instrumentForVoice = null" class="w-full p-1 border rounded">
                                         <option v-for="instrument in midiInstruments" :key="instrument" :value="instrument">{{ instrument }}</option>
                                     </select>
                                 </td>
                                 <template v-for="(beat, beatIndex) in voice.measures[measureIndex].beats">
-                                    <td v-for="(note, noteIndex) in beat.notes" class="beat" :class="{ selected: isBeatSelected(measureIndex, beatIndex) }">
-                                        <div class="note" @click.stop="editNote(voiceIndex, measureIndex, beatIndex, noteIndex)">
-                                            <div v-if="isNoteEditing(voiceIndex, measureIndex, beatIndex, noteIndex)">
-                                                <select v-model="note.pitch" class="p-1 border rounded text-sm w-full">
+                                    <td class="beat" :class="{ selected: selection.measure === measureIndex && selection.beat === beatIndex }">
+                                        <div class="note" @click.stop="editNote(voiceIndex, measureIndex, beatIndex)">
+                                            <div v-if="editing.note && editing.note.v === voiceIndex && editing.note.m === measureIndex && editing.note.b === beatIndex">
+                                                <select v-model="beat.note.pitch" class="p-1 border rounded text-sm w-full">
                                                     <option v-for="p in pitches" :value="p">{{ p }}</option>
                                                 </select>
-                                                <select v-model="note.octave" class="p-1 border rounded text-sm w-full mt-1">
+                                                <select v-model="beat.note.octave" class="p-1 border rounded text-sm w-full mt-1">
                                                     <option v-for="o in octaves" :value="o">{{ o }}</option>
                                                 </select>
                                             </div>
                                             <div v-else class="note-content">
-                                                <span>{{ note.pitch }}</span>
-                                                <sup v-if="note.octave > voice.defaultOctave">{{ '|'.repeat(note.octave - voice.defaultOctave) }}</sup>
-                                                <sub v-if="note.octave < voice.defaultOctave">{{ '|'.repeat(voice.defaultOctave - note.octave) }}</sub>
+                                                <span>{{ beat.note.pitch }}</span>
+                                                <sup v-if="beat.note.octave > voice.defaultOctave">{{ '|'.repeat(beat.note.octave - voice.defaultOctave) }}</sup>
+                                                <sub v-if="beat.note.octave < voice.defaultOctave">{{ '|'.repeat(voice.defaultOctave - beat.note.octave) }}</sub>
                                             </div>
                                         </div>
                                     </td>
@@ -169,20 +182,29 @@
                             </tr>
                             <!-- Paroles -->
                              <tr v-for="(lyricLine, lyricIndex) in score.lyrics" :key="lyricLine.id">
-                                <td class="voice-name text-sm italic">Paroles {{ lyricIndex + 1 }}</td>
+                                <td v-if="measureIndex === 0" class="voice-name text-sm italic" @click="toggleLyricVoiceEditor(lyricLine.id)">
+                                    <div v-if="editing.lyricLineId !== lyricLine.id">Paroles {{ lyricIndex + 1 }}</div>
+                                    <div v-else class="lyric-voice-editor">
+                                        <div class="font-bold mb-1">Voix concernées:</div>
+                                        <div v-for="voice in score.voices" :key="voice.id">
+                                            <input type="checkbox" :id="'v'+voice.id+'l'+lyricLine.id" :value="voice.id" v-model="lyricLine.appliesToVoices">
+                                            <label :for="'v'+voice.id+'l'+lyricLine.id">{{ voice.name }}</label>
+                                        </div>
+                                    </div>
+                                </td>
                                 <template v-for="(beat, beatIndex) in lyricLine.measures[measureIndex].beats">
-                                    <td v-for="n in beat.notes" class="beat">
-                                        <input type="text" v-model="n.lyric" class="lyrics-input">
+                                    <td class="beat">
+                                        <input type="text" v-model="beat.lyric" class="lyrics-input">
                                     </td>
                                 </template>
                             </tr>
                             <!-- Contrôles des temps -->
                             <tr>
-                                <td class="voice-name"></td>
-                                <td v-for="(beat, beatIndex) in score.voices[0].measures[measureIndex].beats" :colspan="beat.notes.length" class="pt-2">
-                                     <button @click="divideBeat(measureIndex, beatIndex)" class="beat-control-button bg-blue-500" title="Diviser en 2">½</button>
-                                     <button @click="divideBeatInQuarter(measureIndex, beatIndex)" class="beat-control-button bg-blue-700" title="Diviser en 4">¼</button>
-                                     <button @click="deleteBeat(measureIndex, beatIndex)" class="beat-control-button bg-red-500" title="Supprimer temps">X</button>
+                                <td v-if="measureIndex === 0" class="voice-name"></td>
+                                <td v-for="(beat, beatIndex) in score.voices[0].measures[measureIndex].beats" class="pt-2">
+                                     <button @click="divideBeatInTwo(measureIndex, beatIndex)" class="beat-control-button bg-blue-500" title="Diviser ce temps en deux">÷2</button>
+                                     <button @click="deleteBeat(measureIndex, beatIndex)" class="beat-control-button bg-red-500" title="Supprimer ce temps">X</button>
+                                     <div class="beat-duration">{{ beat.duration }} temps</div>
                                 </td>
                             </tr>
                         </table>
@@ -198,7 +220,6 @@
 
         createApp({
             setup() {
-                const previousKey = ref('C');
                 const score = reactive({
                     meta: {
                         scoreNumber: 'No. 1', title: 'Titre de la Partition', key: 'C',
@@ -218,15 +239,26 @@
                 const chromaticToSolfa = Object.fromEntries(Object.entries(solfaToChromatic).map(a => a.reverse()));
                 const keyToOffset = { 'C':0, 'Db':1, 'D':2, 'Eb':3, 'E':4, 'F':5, 'Gb':6, 'G':7, 'Ab':8, 'A':9, 'Bb':10, 'B':11 };
 
-                const editing = reactive({ note: null, instrumentForVoice: null });
+                const editing = reactive({ note: null, instrumentForVoice: null, lyricLineId: null });
                 const selection = reactive({ measure: null, beat: null });
 
-                const createEmptyNote = (octave) => ({ pitch: 's', duration: 0.25, octave: octave });
-                const createEmptyBeat = (octave) => ({ notes: [createEmptyNote(octave)] });
-                const createEmptyMeasure = (octave, beatCount = 4) => ({ beats: Array.from({ length: beatCount }, () => createEmptyBeat(octave)) });
+                const createEmptyNote = (octave) => ({ pitch: ' ', octave: octave });
+                const createEmptyBeat = (octave, duration = 0.25) => ({ note: createEmptyNote(octave), duration: duration });
+                const createEmptyMeasure = (octave) => ({ beats: [
+                    createEmptyBeat(octave),
+                    createEmptyBeat(octave),
+                    createEmptyBeat(octave),
+                    createEmptyBeat(octave)
+                ]});
                 const createEmptyLyricNote = () => ({ lyric: '' });
-                const createEmptyLyricBeat = (noteCount = 1) => ({ notes: Array.from({ length: noteCount }, createEmptyLyricNote) });
-                const createEmptyLyricMeasure = (beats) => ({ beats: beats.map(b => createEmptyLyricBeat(b.notes.length)) });
+                const createEmptyLyricBeat = () => ({ lyric: '' });
+                const createEmptyLyricMeasure = () => ({ beats: [
+                    createEmptyLyricBeat(),
+                    createEmptyLyricBeat(),
+                    createEmptyLyricBeat(),
+                    createEmptyLyricBeat()
+                ]});
+
 
                 const initializeScore = () => {
                     ['Soprano', 'Alto', 'Tenor', 'Basse'].forEach((name, i) => {
@@ -238,23 +270,19 @@
                 
                 const syncStructures = () => {
                     const measureCount = score.voices[0]?.measures.length || 0;
+                    if (measureCount === 0) return;
                     const getMeasureBeats = (measureIndex) => score.voices[0]?.measures[measureIndex]?.beats || [];
 
                     while (score.executionSymbols.length < measureCount) score.executionSymbols.push('');
                     while (score.executionSymbols.length > measureCount) score.executionSymbols.pop();
 
                     score.lyrics.forEach(line => {
-                        while (line.measures.length < measureCount) line.measures.push(createEmptyLyricMeasure(getMeasureBeats(line.measures.length)));
+                        while (line.measures.length < measureCount) line.measures.push(createEmptyLyricMeasure());
                         while (line.measures.length > measureCount) line.measures.pop();
                         line.measures.forEach((measure, mIdx) => {
-                            const voiceBeats = getMeasureBeats(mIdx);
-                            while (measure.beats.length < voiceBeats.length) measure.beats.push(createEmptyLyricBeat(voiceBeats[measure.beats.length].notes.length));
-                            while (measure.beats.length > voiceBeats.length) measure.beats.pop();
-                            measure.beats.forEach((beat, bIdx) => {
-                                const noteCount = voiceBeats[bIdx].notes.length;
-                                while(beat.notes.length < noteCount) beat.notes.push(createEmptyLyricNote());
-                                while(beat.notes.length > noteCount) beat.notes.pop();
-                            });
+                            const voiceBeatCount = getMeasureBeats(mIdx).length;
+                            while (measure.beats.length < voiceBeatCount) measure.beats.push(createEmptyLyricBeat());
+                            while (measure.beats.length > voiceBeatCount) measure.beats.pop();
                         });
                     });
                 };
@@ -262,6 +290,7 @@
                 watch(() => score.voices, syncStructures, { deep: true });
 
                 watch(() => score.meta.key, (newKey, oldKey) => {
+                    if(!oldKey) return;
                     const oldOffset = keyToOffset[oldKey];
                     const newOffset = keyToOffset[newKey];
                     const transposeInterval = newOffset - oldOffset;
@@ -270,23 +299,30 @@
                     score.voices.forEach(voice => {
                         voice.measures.forEach(measure => {
                             measure.beats.forEach(beat => {
-                                beat.notes.forEach(note => {
-                                    if (solfaToChromatic[note.pitch] !== undefined) {
-                                        let numericPitch = solfaToChromatic[note.pitch];
-                                        let transposedPitch = (numericPitch + transposeInterval + 12) % 12;
-                                        note.pitch = chromaticToSolfa[transposedPitch];
-                                    }
-                                });
+                                if (solfaToChromatic[beat.note.pitch] !== undefined) {
+                                    let numericPitch = solfaToChromatic[beat.note.pitch];
+                                    let transposedPitch = (numericPitch + transposeInterval + 12) % 12;
+                                    beat.note.pitch = chromaticToSolfa[transposedPitch];
+                                }
                             });
                         });
                     });
                 });
 
-                const addVoice = (name, defaultOctave) => {
+                const addVoice = (name = 'Nouvelle Voix', defaultOctave = 3) => {
                     const newId = score.voices.length ? Math.max(...score.voices.map(v => v.id)) + 1 : 1;
-                    score.voices.push({
+                    const newVoice = {
                         id: newId, name: name, instrument: 'Piano', defaultOctave: defaultOctave, measures: []
-                    });
+                    };
+                    const measureCount = score.voices[0]?.measures.length || 0;
+                    for (let i = 0; i < measureCount; i++) {
+                        const beatCount = score.voices[0].measures[i].beats.length;
+                        newVoice.measures.push(createEmptyMeasure(newVoice.defaultOctave));
+                        // This part is tricky due to the new data model, we need to make sure the number of beats is consistent
+                        newVoice.measures[i].beats.splice(0, newVoice.measures[i].beats.length, ...Array.from({length: beatCount}, () => createEmptyBeat(newVoice.defaultOctave)));
+                    }
+                    score.voices.push(newVoice);
+                    syncStructures();
                 };
 
                 const addMeasureToAll = () => {
@@ -296,45 +332,66 @@
                     syncStructures();
                 };
                 
-                const deleteMeasure = (measureIndex) => { /* ... */ };
-
-                const divideBeat = (measureIndex, beatIndex) => {
+                const deleteMeasure = (measureIndex) => {
+                    if (score.voices[0].measures.length <= 1) return alert("La partition doit contenir au moins une mesure.");
                     score.voices.forEach(voice => {
-                        const beat = voice.measures[measureIndex].beats[beatIndex];
-                        beat.notes.push(createEmptyNote(voice.defaultOctave));
+                        voice.measures.splice(measureIndex, 1);
                     });
                     syncStructures();
                 };
 
-                const divideBeatInQuarter = (measureIndex, beatIndex) => {
+                const divideBeatInTwo = (measureIndex, beatIndex) => {
                     score.voices.forEach(voice => {
-                        const beat = voice.measures[measureIndex].beats[beatIndex];
-                        if (beat.notes.length === 1) {
-                            beat.notes.push(createEmptyNote(voice.defaultOctave), createEmptyNote(voice.defaultOctave), createEmptyNote(voice.defaultOctave));
-                        } else if (beat.notes.length === 2) {
-                             beat.notes.push(createEmptyNote(voice.defaultOctave), createEmptyNote(voice.defaultOctave));
+                        const originalBeat = voice.measures[measureIndex].beats[beatIndex];
+                        const newDuration = originalBeat.duration / 2;
+
+                        if (newDuration < 0.125) { // Minimum duration
+                            const message = document.createElement('div');
+                            message.textContent = "Un temps ne peut pas être divisé en plus de petites durées.";
+                            message.style.cssText = "position: fixed; top: 20px; right: 20px; background-color: #f87171; color: white; padding: 12px 20px; border-radius: 8px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);";
+                            document.body.appendChild(message);
+                            setTimeout(() => message.remove(), 3000);
+                            return;
                         }
+                        
+                        // Create two new beats, with the first inheriting the note
+                        const newBeat1 = { ...originalBeat, duration: newDuration };
+                        const newBeat2 = createEmptyBeat(voice.defaultOctave, newDuration);
+                        
+                        // Replace the original beat with the two new ones
+                        voice.measures[measureIndex].beats.splice(beatIndex, 1, newBeat1, newBeat2);
                     });
                     syncStructures();
                 };
                 
                 const deleteBeat = (measureIndex, beatIndex) => {
-                    if (score.voices[0].measures[measureIndex].beats.length <= 1) return alert("Une mesure doit avoir au moins un temps.");
-                    score.voices.forEach(voice => {
-                        voice.measures[measureIndex].beats.splice(beatIndex, 1);
-                    });
-                    syncStructures();
+                    if (score.voices[0].measures[measureIndex].beats.length <= 1) {
+                        deleteMeasure(measureIndex);
+                    } else {
+                        score.voices.forEach(voice => {
+                            voice.measures[measureIndex].beats.splice(beatIndex, 1);
+                        });
+                        syncStructures();
+                    }
                 };
 
                 const addLyricLine = () => {
-                    const newLine = { id: Date.now(), measures: [] };
+                    const newLine = { 
+                        id: Date.now(), 
+                        appliesToVoices: score.voices.map(v => v.id),
+                        measures: [] 
+                    };
                     score.lyrics.push(newLine);
                     syncStructures();
                 };
+
+                const toggleLyricVoiceEditor = (lyricId) => {
+                    editing.lyricLineId = editing.lyricLineId === lyricId ? null : lyricId;
+                };
                 
                 const isBeatSelected = (mIdx, bIdx) => selection.measure === mIdx && selection.beat === bIdx;
-                const editNote = (v,m,b,n) => { editing.note = {v,m,b,n}; };
-                const isNoteEditing = (v,m,b,n) => editing.note && editing.note.v === v && editing.note.m === m && editing.note.b === b && editing.note.n === n;
+                const editNote = (v,m,b) => { editing.note = {v,m,b}; };
+                const isNoteEditing = (v,m,b) => editing.note && editing.note.v === v && editing.note.m === m && editing.note.b === b;
 
                 const exportToJson = () => {
                     console.log(JSON.stringify(score, null, 2));
@@ -345,13 +402,15 @@
                 
                 window.addEventListener('click', (e) => {
                     if (!e.target.closest('.note, .voice-name')) editing.note = null;
+                    if (!e.target.closest('.voice-name.italic')) editing.lyricLineId = null;
                 });
 
                 return {
                     score, pitches, octaves, midiInstruments, tonalKeys, editing, selection,
                     addVoice, addMeasureToAll, deleteMeasure,
-                    divideBeat, divideBeatInQuarter, deleteBeat, isBeatSelected,
-                    editNote, isNoteEditing, addLyricLine, exportToJson
+                    divideBeatInTwo, deleteBeat, isBeatSelected,
+                    editNote, isNoteEditing, addLyricLine, toggleLyricVoiceEditor,
+                    exportToJson
                 };
             }
         }).mount('#app');
