@@ -15,7 +15,7 @@
             position: relative;
         }
         .note-content, .symbol-content {
-            border: 1px solid #e2e8f0;
+            border: 1px solid #e2f8f0;
             padding: 4px 8px;
             border-radius: 4px;
             background-color: #f8fafc;
@@ -32,7 +32,7 @@
             margin-right: 8px;
         }
         .score-table td {
-            padding: 2px 4px;
+            padding: 6px 4px; /* Increased vertical padding */
             vertical-align: middle;
             text-align: center;
         }
@@ -43,7 +43,7 @@
             font-weight: bold;
             width: 110px;
             text-align: right;
-            padding-right: 10px;
+            padding: 6px 10px; /* Increased vertical padding */
             cursor: pointer;
             vertical-align: top;
         }
@@ -79,6 +79,7 @@
             display: flex;
             align-items: center;
             margin-right: 1.5rem;
+            margin-bottom: 3rem; /* Increased vertical margin between systems */
         }
         .system-brace {
             font-family: monospace;
@@ -153,14 +154,14 @@
                             <table v-for="(measure, measureIndex) in measures" class="score-table">
                                 <!-- Symboles -->
                                 <tr>
-                                    <td v-if="systemIndex === 0 && measureIndex === 0" class="voice-name text-sm">Symboles</td>
+                                    <td v-if="measureIndex === 0" class="voice-name text-sm">Symboles</td>
                                     <td v-for="(beat, beatIndex) in score.voices[0].measures[measure.originalIndex].beats" :key="beatIndex">
                                         <input type="text" v-model="beat.symbol" class="symbol-content w-full text-center" placeholder="p, f, 𝄐...">
                                     </td>
                                 </tr>
                                 <!-- Voix -->
                                 <tr v-for="(voice, voiceIndex) in score.voices" :key="voice.id">
-                                    <td v-if="systemIndex === 0 && measureIndex === 0" class="voice-name" @click="editing.instrumentForVoice = voice.id">
+                                    <td v-if="measureIndex === 0" class="voice-name" @click="editing.instrumentForVoice = voice.id">
                                         <span v-if="editing.instrumentForVoice !== voice.id">{{ voice.name }}</span>
                                         <select v-else v-model="voice.instrument" @blur="editing.instrumentForVoice = null" class="w-full p-1 border rounded">
                                             <option v-for="instrument in midiInstruments" :key="instrument" :value="instrument">{{ instrument }}</option>
@@ -188,7 +189,7 @@
                                 </tr>
                                 <!-- Paroles -->
                                  <tr v-for="(lyricLine, lyricIndex) in score.lyrics" :key="lyricLine.id">
-                                    <td v-if="systemIndex === 0 && measureIndex === 0" class="voice-name text-sm italic" @click="toggleLyricVoiceEditor(lyricLine.id)">
+                                    <td v-if="measureIndex === 0" class="voice-name text-sm italic" @click="toggleLyricVoiceEditor(lyricLine.id)">
                                         <div v-if="editing.lyricLineId !== lyricLine.id">Paroles {{ lyricIndex + 1 }}</div>
                                         <div v-else class="lyric-voice-editor">
                                             <div class="font-bold mb-1">Voix concernées:</div>
@@ -206,7 +207,7 @@
                                 </tr>
                                 <!-- Contrôles des temps -->
                                 <tr>
-                                    <td v-if="systemIndex === 0 && measureIndex === 0" class="voice-name"></td>
+                                    <td v-if="measureIndex === 0" class="voice-name"></td>
                                     <td v-for="(beat, beatIndex) in score.voices[0].measures[measure.originalIndex].beats" class="pt-2">
                                          <button @click="divideBeatInTwo(measure.originalIndex, beatIndex)" class="beat-control-button bg-blue-500" title="Diviser ce temps en deux">÷2</button>
                                          <button @click="deleteBeat(measure.originalIndex, beatIndex)" class="beat-control-button bg-red-500" title="Supprimer ce temps">X</button>
@@ -215,7 +216,7 @@
                                 </tr>
                                 <!-- Contrôles de Mesure -->
                                 <tr>
-                                    <td v-if="systemIndex === 0 && measureIndex === 0" class="voice-name"></td>
+                                    <td v-if="measureIndex === 0" class="voice-name"></td>
                                     <td :colspan="score.voices[0].measures[measure.originalIndex].beats.length" class="py-2">
                                         <div class="flex justify-center space-x-2">
                                             <button @click="insertMeasure(measure.originalIndex)" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded text-xs" title="Insérer une mesure à cet endroit">Insérer</button>
