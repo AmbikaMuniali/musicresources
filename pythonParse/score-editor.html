@@ -12,46 +12,71 @@
         }
         .note {
             cursor: pointer;
-            min-width: 40px;
+            min-width: 45px;
             text-align: center;
+            position: relative;
         }
-        .note-content {
+        .note-content, .symbol-content {
             border: 1px solid #e2e8f0;
             padding: 4px 8px;
             border-radius: 4px;
             background-color: #f8fafc;
+            transition: background-color 0.2s;
+            display: block;
+            width: 100%;
         }
-        .measure {
+        .note:hover .note-content {
+            background-color: #e0f2fe;
+        }
+        .score-table {
+            border-collapse: collapse;
             border-left: 2px solid black;
-            padding-left: 5px;
-            display: flex;
-            gap: 5px;
+            margin-right: 8px;
         }
-        .system-brace-start {
-            font-size: 4rem;
+        .score-table td {
+            padding: 2px 4px;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .beat.selected {
+            background-color: #dbeafe;
+        }
+        .system-brace {
+            font-size: 8rem;
             line-height: 1;
             align-self: stretch;
             display: flex;
             align-items: center;
+            padding: 0 10px;
         }
         .voice-name {
             font-weight: bold;
-            width: 80px;
+            width: 110px;
             text-align: right;
             padding-right: 10px;
+            cursor: pointer;
         }
         .lyrics-input {
-            width: 100%;
+            width: 50px; /* Reduced width */
+            min-width: 45px;
             border: 1px solid #ccc;
             padding: 2px;
             font-family: monospace;
+            text-align: center;
+        }
+        .beat-control-button {
+            padding: 2px 4px;
+            font-size: 0.75rem;
+            margin: 0 1px;
+            border-radius: 4px;
+            color: white;
         }
     </style>
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 </head>
 <body class="bg-gray-100 text-gray-800 p-4 sm:p-6 md:p-8">
 
-    <div id="app" class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <div id="app" class="max-w-full mx-auto bg-white p-6 rounded-lg shadow-lg">
         <!-- Entête -->
         <header class="mb-6 border-b pb-4">
             <div class="grid grid-cols-3 items-center text-center">
@@ -62,7 +87,10 @@
                     <input type="text" v-model="score.meta.title" class="w-full text-center p-1 border rounded">
                 </h1>
                 <div class="text-right font-bold">
-                    Gamme: <input type="text" v-model="score.meta.key" class="w-20 p-1 border rounded">
+                    Tonalité:
+                    <select v-model="score.meta.key" class="w-24 p-1 border rounded">
+                        <option v-for="(name, key) in tonalKeys" :value="key">{{ name }}</option>
+                    </select>
                 </div>
             </div>
             <div class="grid grid-cols-3 items-center text-center mt-2">
@@ -80,18 +108,11 @@
                 <div class="mr-6">
                     <label for="time-signature" class="font-bold block">Mesure:</label>
                     <select id="time-signature" v-model="score.meta.timeSignature" class="p-1 border rounded">
-                        <option>2/4</option>
-                        <option>3/4</option>
-                        <option>4/4</option>
-                        <option>6/8</option>
+                        <option>2/4</option> <option>3/4</option> <option>4/4</option> <option>6/8</option>
                     </select>
                     <div class="text-sm">
                         Tempo: <input type="number" v-model.number="score.meta.tempo" class="w-16 p-1 border rounded"> bpm
                     </div>
-                </div>
-                <div>
-                     <label for="performance-directions" class="font-bold block">Indications:</label>
-                    <input type="text" v-model="score.meta.performanceDirections" id="performance-directions" class="p-1 border rounded w-64">
                 </div>
             </div>
         </header>
@@ -100,253 +121,240 @@
         <main>
             <div class="flex items-center mb-4">
                 <h2 class="text-2xl font-semibold mr-4">Partition</h2>
-                 <button @click="addVoice" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 text-sm">
-                    + Ajouter Voix
-                </button>
-                <button @click="exportToJson" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm">
-                    Exporter en JSON
-                </button>
+                <button @click="addVoice" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 text-sm">+ Ajouter Voix</button>
+                <button @click="addMeasureToAll" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mr-2 text-sm">+ Ajouter Mesure</button>
+                <button @click="exportToJson" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm">Exporter en JSON</button>
             </div>
 
-            <!-- Rendu de la partition -->
-            <div class="flex">
-                 <div class="system-brace-start">{</div>
-                 <div class="w-full">
-                    <div v-for="(voice, voiceIndex) in score.voices" :key="voice.id" class="flex items-center mb-2">
-                        <div class="voice-name">
-                            <input type="text" v-model="voice.name" class="w-full text-right p-1 border rounded">
-                        </div>
-                        <div class="flex items-center">
-                            <div v-for="(measure, measureIndex) in voice.measures" :key="measureIndex" class="measure flex-nowrap">
-                                <div v-for="(beat, beatIndex) in measure.beats" :key="beatIndex" class="flex items-center gap-1">
-                                    <!-- Logique d'affichage des notes -->
-                                    <div v-for="(note, noteIndex) in beat.notes" :key="noteIndex" class="note" @click="editNote(voiceIndex, measureIndex, beatIndex, noteIndex)">
-                                        <div v-if="editing.voice === voiceIndex && editing.measure === measureIndex && editing.beat === beatIndex && editing.note === noteIndex">
-                                            <select v-model="note.pitch" class="p-1 border rounded text-sm">
-                                                <option v-for="p in pitches" :value="p">{{ p }}</option>
-                                            </select>
-                                            <select v-model="note.octave" class="p-1 border rounded text-sm">
-                                                 <option v-for="o in octaves" :value="o">{{ o }}</option>
-                                            </select>
+            <div class="flex overflow-x-auto pb-4">
+                <div class="system-brace">{</div>
+                <div class="flex">
+                    <!-- Itération par mesure pour créer une table pour chaque -->
+                    <template v-for="(_, measureIndex) in score.voices[0]?.measures || []">
+                        <table class="score-table">
+                            <!-- Symboles -->
+                            <tr>
+                                <td class="voice-name text-sm">Symboles</td>
+                                <td v-for="(beat, beatIndex) in score.voices[0].measures[measureIndex].beats" :colspan="beat.notes.length">
+                                    <input type="text" v-model="score.executionSymbols[measureIndex]" class="symbol-content w-full text-center" placeholder="p, f, 𝄐...">
+                                </td>
+                            </tr>
+                            <!-- Voix -->
+                            <tr v-for="(voice, voiceIndex) in score.voices" :key="voice.id">
+                                <td class="voice-name" @click="editing.instrumentForVoice = voice.id">
+                                    <span v-if="editing.instrumentForVoice !== voice.id">{{ voice.name }}</span>
+                                    <select v-else v-model="voice.instrument" @blur="editing.instrumentForVoice = null" class="w-full p-1 border rounded">
+                                        <option v-for="instrument in midiInstruments" :key="instrument" :value="instrument">{{ instrument }}</option>
+                                    </select>
+                                </td>
+                                <template v-for="(beat, beatIndex) in voice.measures[measureIndex].beats">
+                                    <td v-for="(note, noteIndex) in beat.notes" class="beat" :class="{ selected: isBeatSelected(measureIndex, beatIndex) }">
+                                        <div class="note" @click.stop="editNote(voiceIndex, measureIndex, beatIndex, noteIndex)">
+                                            <div v-if="isNoteEditing(voiceIndex, measureIndex, beatIndex, noteIndex)">
+                                                <select v-model="note.pitch" class="p-1 border rounded text-sm w-full">
+                                                    <option v-for="p in pitches" :value="p">{{ p }}</option>
+                                                </select>
+                                                <select v-model="note.octave" class="p-1 border rounded text-sm w-full mt-1">
+                                                    <option v-for="o in octaves" :value="o">{{ o }}</option>
+                                                </select>
+                                            </div>
+                                            <div v-else class="note-content">
+                                                <span>{{ note.pitch }}</span>
+                                                <sup v-if="note.octave > voice.defaultOctave">{{ '|'.repeat(note.octave - voice.defaultOctave) }}</sup>
+                                                <sub v-if="note.octave < voice.defaultOctave">{{ '|'.repeat(voice.defaultOctave - note.octave) }}</sub>
+                                            </div>
                                         </div>
-                                        <div v-else class="note-content">
-                                            <span>{{ note.pitch }}</span>
-                                            <sup v-if="note.octave > voice.defaultOctave">{{ '|'.repeat(note.octave - voice.defaultOctave) }}</sup>
-                                            <sub v-if="note.octave < voice.defaultOctave">{{ '|'.repeat(voice.defaultOctave - note.octave) }}</sub>
-                                        </div>
-                                    </div>
-                                    <span v-if="beatIndex < measure.beats.length - 1" class="font-bold text-gray-400">:</span>
-                                </div>
-                                <button @click="deleteMeasure(voiceIndex, measureIndex)" class="text-red-500 hover:text-red-700 ml-2 text-xs">X</button>
-                            </div>
-                             <button @click="addMeasure(voiceIndex)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-1 px-2 rounded ml-2 text-xs">+</button>
-                        </div>
-                         <button @click="removeVoice(voiceIndex)" class="text-red-500 hover:text-red-700 ml-2 font-bold">Supprimer Voix</button>
-                    </div>
+                                    </td>
+                                </template>
+                            </tr>
+                            <!-- Paroles -->
+                             <tr v-for="(lyricLine, lyricIndex) in score.lyrics" :key="lyricLine.id">
+                                <td class="voice-name text-sm italic">Paroles {{ lyricIndex + 1 }}</td>
+                                <template v-for="(beat, beatIndex) in lyricLine.measures[measureIndex].beats">
+                                    <td v-for="n in beat.notes" class="beat">
+                                        <input type="text" v-model="n.lyric" class="lyrics-input">
+                                    </td>
+                                </template>
+                            </tr>
+                            <!-- Contrôles des temps -->
+                            <tr>
+                                <td class="voice-name"></td>
+                                <td v-for="(beat, beatIndex) in score.voices[0].measures[measureIndex].beats" :colspan="beat.notes.length" class="pt-2">
+                                     <button @click="divideBeat(measureIndex, beatIndex)" class="beat-control-button bg-blue-500" title="Diviser en 2">½</button>
+                                     <button @click="divideBeatInQuarter(measureIndex, beatIndex)" class="beat-control-button bg-blue-700" title="Diviser en 4">¼</button>
+                                     <button @click="deleteBeat(measureIndex, beatIndex)" class="beat-control-button bg-red-500" title="Supprimer temps">X</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </template>
                 </div>
-                 <div class="system-brace-start">}</div>
+                <div class="system-brace">}</div>
             </div>
-             <button @click="addMeasureToAll" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                Ajouter une mesure à toutes les voix
-            </button>
         </main>
-
-        <!-- Paroles -->
-        <section class="mt-8">
-            <h3 class="text-xl font-semibold mb-2">Paroles</h3>
-            <div>
-                <label class="font-bold">Couplet 1 (aligné avec les notes):</label>
-                <div class="flex mt-2">
-                     <div class="voice-name">&nbsp;</div> <!-- Spacer -->
-                     <div class="flex">
-                        <div v-for="(measure, measureIndex) in score.voices[0]?.measures" :key="measureIndex" class="measure">
-                             <div v-for="(beat, beatIndex) in measure.beats" :key="beatIndex" class="flex gap-1">
-                                <div v-for="(note, noteIndex) in beat.notes" :key="noteIndex" class="note">
-                                     <input type="text" v-model="score.lyrics[0].measures[measureIndex].beats[beatIndex].notes[noteIndex]" class="lyrics-input text-center">
-                                </div>
-                             </div>
-                        </div>
-                     </div>
-                </div>
-            </div>
-            <div class="mt-4">
-                <label for="other-verses" class="font-bold">Autres couplets:</label>
-                <textarea id="other-verses" v-model="score.lyrics[1].text" rows="4" class="w-full p-2 border rounded mt-1"></textarea>
-            </div>
-        </section>
-
     </div>
 
     <script>
-        const { createApp, ref, reactive, watch } = Vue;
+        const { createApp, reactive, watch, nextTick, ref } = Vue;
 
         createApp({
             setup() {
-                // --- Données Réactives ---
+                const previousKey = ref('C');
                 const score = reactive({
                     meta: {
-                        scoreNumber: 'No. 1',
-                        title: 'Titre de la Partition',
-                        key: 'Do Majeur',
-                        authors: 'Auteur(s)',
-                        subtitle: 'Sous-titre',
-                        referenceBook: 'Livre de référence',
-                        timeSignature: '4/4',
-                        tempo: 120,
-                        performanceDirections: 'Moderato'
+                        scoreNumber: 'No. 1', title: 'Titre de la Partition', key: 'C',
+                        authors: 'Auteur(s)', subtitle: 'Sous-titre', referenceBook: 'Livre de référence',
+                        timeSignature: '4/4', tempo: 120,
                     },
-                    voices: [
-                        { id: 1, name: 'Soprano', defaultOctave: 4, measures: [] },
-                        { id: 2, name: 'Alto', defaultOctave: 4, measures: [] },
-                        { id: 3, name: 'Tenor', defaultOctave: 3, measures: [] },
-                        { id: 4, name: 'Basse', defaultOctave: 3, measures: [] }
-                    ],
-                    lyrics: [
-                        { verse: 1, measures: [] },
-                        { verse: 'other', text: '' }
-                    ]
+                    voices: [],
+                    lyrics: [],
+                    executionSymbols: []
                 });
 
                 const pitches = ['d', 'de', 'r', 're', 'm', 'f', 'fe', 's', 'se', 'l', 'ta', 't', ' ', '-'];
-                const octaves = [-3, -2, -1, 0, 1, 2, 3].map(o => 4 + o); // Centré autour de l'octave 4
+                const octaves = [-3, -2, -1, 0, 1, 2, 3].map(o => 4 + o);
+                const midiInstruments = ["Piano", "Marimba", "Organ", "Accordion", "Guitar", "Bass", "Violin", "Cello", "Trumpet", "Trombone", "Sax", "Clarinet", "Flute", "Recorder", "Oboe", "Synth Voice", "Orchestra Hit"];
+                const tonalKeys = { 'C': 'Do', 'Db': 'Do#', 'D': 'Ré', 'Eb': 'Mib', 'E': 'Mi', 'F': 'Fa', 'Gb': 'Fa#', 'G': 'Sol', 'Ab': 'Sol#', 'A': 'La', 'Bb': 'Sib', 'B': 'Si' };
+                const solfaToChromatic = { 'd':0, 'de':1, 'r':2, 're':3, 'm':4, 'f':5, 'fe':6, 's':7, 'se':8, 'l':9, 'ta':10, 't':11 };
+                const chromaticToSolfa = Object.fromEntries(Object.entries(solfaToChromatic).map(a => a.reverse()));
+                const keyToOffset = { 'C':0, 'Db':1, 'D':2, 'Eb':3, 'E':4, 'F':5, 'Gb':6, 'G':7, 'Ab':8, 'A':9, 'Bb':10, 'B':11 };
 
-                const editing = reactive({
-                    voice: null,
-                    measure: null,
-                    beat: null,
-                    note: null
-                });
-                
-                // --- Fonctions ---
+                const editing = reactive({ note: null, instrumentForVoice: null });
+                const selection = reactive({ measure: null, beat: null });
 
                 const createEmptyNote = (octave) => ({ pitch: 's', duration: 0.25, octave: octave });
                 const createEmptyBeat = (octave) => ({ notes: [createEmptyNote(octave)] });
-                const createEmptyMeasure = (octave) => ({
-                    beats: Array.from({ length: 4 }, () => createEmptyBeat(octave))
-                });
-                const createEmptyLyricsMeasure = () => ({
-                    beats: Array.from({ length: 4 }, () => ({ notes: [''] }))
-                });
+                const createEmptyMeasure = (octave, beatCount = 4) => ({ beats: Array.from({ length: beatCount }, () => createEmptyBeat(octave)) });
+                const createEmptyLyricNote = () => ({ lyric: '' });
+                const createEmptyLyricBeat = (noteCount = 1) => ({ notes: Array.from({ length: noteCount }, createEmptyLyricNote) });
+                const createEmptyLyricMeasure = (beats) => ({ beats: beats.map(b => createEmptyLyricBeat(b.notes.length)) });
 
-                // Initialiser la partition avec une mesure
                 const initializeScore = () => {
-                    score.voices.forEach(voice => {
-                        voice.measures.push(createEmptyMeasure(voice.defaultOctave));
+                    ['Soprano', 'Alto', 'Tenor', 'Basse'].forEach((name, i) => {
+                        addVoice(name, i < 2 ? 4 : 3);
                     });
-                    score.lyrics[0].measures.push(createEmptyLyricsMeasure());
+                    addMeasureToAll();
+                    addLyricLine();
                 };
                 
-                initializeScore();
+                const syncStructures = () => {
+                    const measureCount = score.voices[0]?.measures.length || 0;
+                    const getMeasureBeats = (measureIndex) => score.voices[0]?.measures[measureIndex]?.beats || [];
 
-                // Synchroniser la structure des paroles avec la première voix
-                watch(() => score.voices[0]?.measures, (newMeasures) => {
-                    if (!newMeasures) return;
-                    const lyricsMeasures = score.lyrics[0].measures;
-                    
-                    // Ajuster le nombre de mesures
-                    while (lyricsMeasures.length < newMeasures.length) {
-                        lyricsMeasures.push(createEmptyLyricsMeasure());
-                    }
-                    while (lyricsMeasures.length > newMeasures.length) {
-                        lyricsMeasures.pop();
-                    }
+                    while (score.executionSymbols.length < measureCount) score.executionSymbols.push('');
+                    while (score.executionSymbols.length > measureCount) score.executionSymbols.pop();
 
-                    // Synchroniser les temps et les notes dans chaque mesure
-                    newMeasures.forEach((measure, mIdx) => {
-                        const lyricsMeasure = lyricsMeasures[mIdx];
-                        while (lyricsMeasure.beats.length < measure.beats.length) {
-                            lyricsMeasure.beats.push({ notes: [''] });
-                        }
-                         while (lyricsMeasure.beats.length > measure.beats.length) {
-                            lyricsMeasure.beats.pop();
-                        }
-                        
-                        measure.beats.forEach((beat, bIdx) => {
-                            const lyricsBeat = lyricsMeasure.beats[bIdx];
-                            while(lyricsBeat.notes.length < beat.notes.length) {
-                                lyricsBeat.notes.push('');
-                            }
-                            while(lyricsBeat.notes.length > beat.notes.length) {
-                                lyricsBeat.notes.pop();
-                            }
+                    score.lyrics.forEach(line => {
+                        while (line.measures.length < measureCount) line.measures.push(createEmptyLyricMeasure(getMeasureBeats(line.measures.length)));
+                        while (line.measures.length > measureCount) line.measures.pop();
+                        line.measures.forEach((measure, mIdx) => {
+                            const voiceBeats = getMeasureBeats(mIdx);
+                            while (measure.beats.length < voiceBeats.length) measure.beats.push(createEmptyLyricBeat(voiceBeats[measure.beats.length].notes.length));
+                            while (measure.beats.length > voiceBeats.length) measure.beats.pop();
+                            measure.beats.forEach((beat, bIdx) => {
+                                const noteCount = voiceBeats[bIdx].notes.length;
+                                while(beat.notes.length < noteCount) beat.notes.push(createEmptyLyricNote());
+                                while(beat.notes.length > noteCount) beat.notes.pop();
+                            });
                         });
                     });
-                }, { deep: true });
+                };
+                
+                watch(() => score.voices, syncStructures, { deep: true });
 
+                watch(() => score.meta.key, (newKey, oldKey) => {
+                    const oldOffset = keyToOffset[oldKey];
+                    const newOffset = keyToOffset[newKey];
+                    const transposeInterval = newOffset - oldOffset;
+                    if (transposeInterval === 0) return;
 
-                const addVoice = () => {
+                    score.voices.forEach(voice => {
+                        voice.measures.forEach(measure => {
+                            measure.beats.forEach(beat => {
+                                beat.notes.forEach(note => {
+                                    if (solfaToChromatic[note.pitch] !== undefined) {
+                                        let numericPitch = solfaToChromatic[note.pitch];
+                                        let transposedPitch = (numericPitch + transposeInterval + 12) % 12;
+                                        note.pitch = chromaticToSolfa[transposedPitch];
+                                    }
+                                });
+                            });
+                        });
+                    });
+                });
+
+                const addVoice = (name, defaultOctave) => {
                     const newId = score.voices.length ? Math.max(...score.voices.map(v => v.id)) + 1 : 1;
-                    const newVoice = {
-                        id: newId,
-                        name: `Voix ${newId}`,
-                        defaultOctave: 3,
-                        measures: []
-                    };
-                    // Ajouter le même nombre de mesures que les autres voix
-                    const measureCount = score.voices[0]?.measures.length || 1;
-                    for (let i = 0; i < measureCount; i++) {
-                        newVoice.measures.push(createEmptyMeasure(newVoice.defaultOctave));
-                    }
-                    score.voices.push(newVoice);
-                };
-
-                const removeVoice = (voiceIndex) => {
-                    if (score.voices.length > 1) {
-                        score.voices.splice(voiceIndex, 1);
-                    } else {
-                        alert("Il doit y avoir au moins une voix.");
-                    }
-                };
-
-                const addMeasure = (voiceIndex) => {
-                    const voice = score.voices[voiceIndex];
-                    voice.measures.push(createEmptyMeasure(voice.defaultOctave));
+                    score.voices.push({
+                        id: newId, name: name, instrument: 'Piano', defaultOctave: defaultOctave, measures: []
+                    });
                 };
 
                 const addMeasureToAll = () => {
                     score.voices.forEach(voice => {
                         voice.measures.push(createEmptyMeasure(voice.defaultOctave));
                     });
+                    syncStructures();
+                };
+                
+                const deleteMeasure = (measureIndex) => { /* ... */ };
+
+                const divideBeat = (measureIndex, beatIndex) => {
+                    score.voices.forEach(voice => {
+                        const beat = voice.measures[measureIndex].beats[beatIndex];
+                        beat.notes.push(createEmptyNote(voice.defaultOctave));
+                    });
+                    syncStructures();
                 };
 
-                const deleteMeasure = (voiceIndex, measureIndex) => {
-                     if (score.voices[voiceIndex].measures.length > 1) {
-                        score.voices[voiceIndex].measures.splice(measureIndex, 1);
-                    } else {
-                        alert("Il doit y avoir au moins une mesure.");
-                    }
+                const divideBeatInQuarter = (measureIndex, beatIndex) => {
+                    score.voices.forEach(voice => {
+                        const beat = voice.measures[measureIndex].beats[beatIndex];
+                        if (beat.notes.length === 1) {
+                            beat.notes.push(createEmptyNote(voice.defaultOctave), createEmptyNote(voice.defaultOctave), createEmptyNote(voice.defaultOctave));
+                        } else if (beat.notes.length === 2) {
+                             beat.notes.push(createEmptyNote(voice.defaultOctave), createEmptyNote(voice.defaultOctave));
+                        }
+                    });
+                    syncStructures();
+                };
+                
+                const deleteBeat = (measureIndex, beatIndex) => {
+                    if (score.voices[0].measures[measureIndex].beats.length <= 1) return alert("Une mesure doit avoir au moins un temps.");
+                    score.voices.forEach(voice => {
+                        voice.measures[measureIndex].beats.splice(beatIndex, 1);
+                    });
+                    syncStructures();
                 };
 
-                const editNote = (voiceIndex, measureIndex, beatIndex, noteIndex) => {
-                    if (editing.voice === voiceIndex && editing.measure === measureIndex && editing.beat === beatIndex && editing.note === noteIndex) {
-                        // Clic sur la même note, on quitte le mode édition
-                        Object.assign(editing, { voice: null, measure: null, beat: null, note: null });
-                    } else {
-                        Object.assign(editing, { voice: voiceIndex, measure: measureIndex, beat: beatIndex, note: noteIndex });
-                    }
+                const addLyricLine = () => {
+                    const newLine = { id: Date.now(), measures: [] };
+                    score.lyrics.push(newLine);
+                    syncStructures();
                 };
+                
+                const isBeatSelected = (mIdx, bIdx) => selection.measure === mIdx && selection.beat === bIdx;
+                const editNote = (v,m,b,n) => { editing.note = {v,m,b,n}; };
+                const isNoteEditing = (v,m,b,n) => editing.note && editing.note.v === v && editing.note.m === m && editing.note.b === b && editing.note.n === n;
 
                 const exportToJson = () => {
                     console.log(JSON.stringify(score, null, 2));
-                    alert("La structure de la partition a été affichée dans la console du navigateur (accessible avec F12).");
+                    alert("La structure de la partition a été affichée dans la console du navigateur (F12).");
                 };
 
+                initializeScore();
+                
+                window.addEventListener('click', (e) => {
+                    if (!e.target.closest('.note, .voice-name')) editing.note = null;
+                });
+
                 return {
-                    score,
-                    pitches,
-                    octaves,
-                    editing,
-                    addVoice,
-                    removeVoice,
-                    addMeasure,
-                    addMeasureToAll,
-                    deleteMeasure,
-                    editNote,
-                    exportToJson
+                    score, pitches, octaves, midiInstruments, tonalKeys, editing, selection,
+                    addVoice, addMeasureToAll, deleteMeasure,
+                    divideBeat, divideBeatInQuarter, deleteBeat, isBeatSelected,
+                    editNote, isNoteEditing, addLyricLine, exportToJson
                 };
             }
         }).mount('#app');
     </script>
-
 </body>
 </html>
