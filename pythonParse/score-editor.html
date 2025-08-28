@@ -139,31 +139,32 @@
                 <button @click="exportToJson" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm">Exporter en JSON</button>
             </div>
 
-            <div class="flex overflow-x-auto pb-4">
+            <!-- Systems of Measures -->
+            <div v-for="(systemMeasures, systemIndex) in measuresBySystem" :key="systemIndex" class="flex items-center flex-wrap pb-4">
                 <div class="system-brace">{</div>
                 <div class="flex">
-                    <!-- Itération par mesure pour créer une table pour chaque -->
-                    <template v-for="(_, measureIndex) in score.voices[0]?.measures || []">
+                    <!-- Iteration through measures within a system -->
+                    <template v-for="(measure, measureIndexInSystem) in systemMeasures">
                         <table class="score-table">
                             <!-- Symboles -->
                             <tr>
-                                <td v-if="measureIndex === 0" class="voice-name text-sm">Symboles</td>
-                                <td v-for="(beat, beatIndex) in score.voices[0].measures[measureIndex].beats">
-                                    <input type="text" v-model="score.executionSymbols[measureIndex]" class="symbol-content w-full text-center" placeholder="p, f, 𝄐...">
+                                <td v-if="measureIndexInSystem === 0" class="voice-name text-sm">Symboles</td>
+                                <td v-for="(beat, beatIndex) in score.voices[0].measures[systemIndex * measuresPerSystem + measureIndexInSystem].beats" :key="beatIndex">
+                                    <input type="text" v-model="beat.symbol" class="symbol-content w-full text-center" placeholder="p, f, 𝄐...">
                                 </td>
                             </tr>
                             <!-- Voix -->
                             <tr v-for="(voice, voiceIndex) in score.voices" :key="voice.id">
-                                <td v-if="measureIndex === 0" class="voice-name" @click="editing.instrumentForVoice = voice.id">
+                                <td v-if="measureIndexInSystem === 0" class="voice-name" @click="editing.instrumentForVoice = voice.id">
                                     <span v-if="editing.instrumentForVoice !== voice.id">{{ voice.name }}</span>
                                     <select v-else v-model="voice.instrument" @blur="editing.instrumentForVoice = null" class="w-full p-1 border rounded">
                                         <option v-for="instrument in midiInstruments" :key="instrument" :value="instrument">{{ instrument }}</option>
                                     </select>
                                 </td>
-                                <template v-for="(beat, beatIndex) in voice.measures[measureIndex].beats">
-                                    <td class="beat" :class="{ selected: selection.measure === measureIndex && selection.beat === beatIndex }">
-                                        <div class="note" @click.stop="editNote(voiceIndex, measureIndex, beatIndex)">
-                                            <div v-if="editing.note && editing.note.v === voiceIndex && editing.note.m === measureIndex && editing.note.b === beatIndex">
+                                <template v-for="(beat, beatIndex) in voice.measures[systemIndex * measuresPerSystem + measureIndexInSystem].beats">
+                                    <td class="beat" :class="{ selected: selection.measure === systemIndex * measuresPerSystem + measureIndexInSystem && selection.beat === beatIndex }">
+                                        <div class="note" @click.stop="editNote(voiceIndex, systemIndex * measuresPerSystem + measureIndexInSystem, beatIndex)">
+                                            <div v-if="editing.note && editing.note.v === voiceIndex && editing.note.m === systemIndex * measuresPerSystem + measureIndexInSystem && editing.note.b === beatIndex">
                                                 <select v-model="beat.note.pitch" class="p-1 border rounded text-sm w-full">
                                                     <option v-for="p in pitches" :value="p">{{ p }}</option>
                                                 </select>
@@ -182,7 +183,7 @@
                             </tr>
                             <!-- Paroles -->
                              <tr v-for="(lyricLine, lyricIndex) in score.lyrics" :key="lyricLine.id">
-                                <td v-if="measureIndex === 0" class="voice-name text-sm italic" @click="toggleLyricVoiceEditor(lyricLine.id)">
+                                <td v-if="measureIndexInSystem === 0" class="voice-name text-sm italic" @click="toggleLyricVoiceEditor(lyricLine.id)">
                                     <div v-if="editing.lyricLineId !== lyricLine.id">Paroles {{ lyricIndex + 1 }}</div>
                                     <div v-else class="lyric-voice-editor">
                                         <div class="font-bold mb-1">Voix concernées:</div>
@@ -192,7 +193,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <template v-for="(beat, beatIndex) in lyricLine.measures[measureIndex].beats">
+                                <template v-for="(beat, beatIndex) in lyricLine.measures[systemIndex * measuresPerSystem + measureIndexInSystem].beats">
                                     <td class="beat">
                                         <input type="text" v-model="beat.lyric" class="lyrics-input">
                                     </td>
@@ -200,10 +201,10 @@
                             </tr>
                             <!-- Contrôles des temps -->
                             <tr>
-                                <td v-if="measureIndex === 0" class="voice-name"></td>
-                                <td v-for="(beat, beatIndex) in score.voices[0].measures[measureIndex].beats" class="pt-2">
-                                     <button @click="divideBeatInTwo(measureIndex, beatIndex)" class="beat-control-button bg-blue-500" title="Diviser ce temps en deux">÷2</button>
-                                     <button @click="deleteBeat(measureIndex, beatIndex)" class="beat-control-button bg-red-500" title="Supprimer ce temps">X</button>
+                                <td v-if="measureIndexInSystem === 0" class="voice-name"></td>
+                                <td v-for="(beat, beatIndex) in score.voices[0].measures[systemIndex * measuresPerSystem + measureIndexInSystem].beats" class="pt-2">
+                                     <button @click="divideBeatInTwo(systemIndex * measuresPerSystem + measureIndexInSystem, beatIndex)" class="beat-control-button bg-blue-500" title="Diviser ce temps en deux">÷2</button>
+                                     <button @click="deleteBeat(systemIndex * measuresPerSystem + measureIndexInSystem, beatIndex)" class="beat-control-button bg-red-500" title="Supprimer ce temps">X</button>
                                      <div class="beat-duration">{{ beat.duration }} temps</div>
                                 </td>
                             </tr>
@@ -216,7 +217,7 @@
     </div>
 
     <script>
-        const { createApp, reactive, watch, nextTick, ref } = Vue;
+        const { createApp, reactive, watch, computed, nextTick, ref } = Vue;
 
         createApp({
             setup() {
@@ -228,7 +229,6 @@
                     },
                     voices: [],
                     lyrics: [],
-                    executionSymbols: []
                 });
 
                 const pitches = ['d', 'de', 'r', 're', 'm', 'f', 'fe', 's', 'se', 'l', 'ta', 't', ' ', '-'];
@@ -242,8 +242,20 @@
                 const editing = reactive({ note: null, instrumentForVoice: null, lyricLineId: null });
                 const selection = reactive({ measure: null, beat: null });
 
+                const measuresPerSystem = 4;
+
+                // Create a computed property to handle the system layout
+                const measuresBySystem = computed(() => {
+                    const systems = [];
+                    const totalMeasures = score.voices[0]?.measures.length || 0;
+                    for (let i = 0; i < totalMeasures; i += measuresPerSystem) {
+                        systems.push(score.voices[0].measures.slice(i, i + measuresPerSystem));
+                    }
+                    return systems;
+                });
+
                 const createEmptyNote = (octave) => ({ pitch: ' ', octave: octave });
-                const createEmptyBeat = (octave, duration = 0.25) => ({ note: createEmptyNote(octave), duration: duration });
+                const createEmptyBeat = (octave, duration = 0.25) => ({ note: createEmptyNote(octave), duration: duration, symbol: '' });
                 const createEmptyMeasure = (octave) => ({ beats: [
                     createEmptyBeat(octave),
                     createEmptyBeat(octave),
@@ -259,7 +271,6 @@
                     createEmptyLyricBeat()
                 ]});
 
-
                 const initializeScore = () => {
                     ['Soprano', 'Alto', 'Tenor', 'Basse'].forEach((name, i) => {
                         addVoice(name, i < 2 ? 4 : 3);
@@ -272,10 +283,7 @@
                     const measureCount = score.voices[0]?.measures.length || 0;
                     if (measureCount === 0) return;
                     const getMeasureBeats = (measureIndex) => score.voices[0]?.measures[measureIndex]?.beats || [];
-
-                    while (score.executionSymbols.length < measureCount) score.executionSymbols.push('');
-                    while (score.executionSymbols.length > measureCount) score.executionSymbols.pop();
-
+                    
                     score.lyrics.forEach(line => {
                         while (line.measures.length < measureCount) line.measures.push(createEmptyLyricMeasure());
                         while (line.measures.length > measureCount) line.measures.pop();
@@ -354,7 +362,7 @@
                             return;
                         }
                         
-                        // Create two new beats, with the first inheriting the note
+                        // Create two new beats, with the first inheriting the note and symbol
                         const newBeat1 = { ...originalBeat, duration: newDuration };
                         const newBeat2 = createEmptyBeat(voice.defaultOctave, newDuration);
                         
@@ -406,7 +414,7 @@
                 });
 
                 return {
-                    score, pitches, octaves, midiInstruments, tonalKeys, editing, selection,
+                    score, pitches, octaves, midiInstruments, tonalKeys, editing, selection, measuresBySystem, measuresPerSystem,
                     addVoice, addMeasureToAll, deleteMeasure,
                     divideBeatInTwo, deleteBeat, isBeatSelected,
                     editNote, isNoteEditing, addLyricLine, toggleLyricVoiceEditor,
